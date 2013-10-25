@@ -287,8 +287,8 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 										@Override
 										public void actionPerformed(ActionEvent e) {
 											if(change && herolist.getSelectedIndex() != -1) {
-												//System.out.println("Saving..."+main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey()+" to "+boxes.get(boxindex).getSelectedIndex());
-												main.config.property.setProperty(main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey(),boxes.get(boxindex).getSelectedIndex()+"");
+												System.out.println("Saving..."+main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey()+" to "+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(boxes.get(boxindex).getSelectedIndex()).getKey());
+												main.config.property.setProperty(main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey(),main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(boxes.get(boxindex).getSelectedIndex()).getKey());
 											}
 										}
 									}
@@ -334,8 +334,8 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 								boxes.get(i*2+1).setVisible(true);
 							}
 							
-							boxes.get(i*2+1).setEnabled(!(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1) >= 0));
-							boxes.get(i*2+1).setSelectedIndex(main.config.property.getProperty(main.config.heroes.get(index).getName()+"."+main.config.heroes.get(index).getAvatar(i).getKey(),i));
+							boxes.get(i*2+1).setEnabled(!(main.config.getAvatarIndex(main.config.heroes.get(index),-1) >= 0));
+							boxes.get(i*2+1).setSelectedIndex(main.config.getAvatarIndex(main.config.heroes.get(index),i));
 						}
 						for(int i = main.config.heroes.get(index).getAvatarCount()*2;i <= boxes.size()-1;i++) {
 							boxes.get(i).setVisible(false);
@@ -346,14 +346,14 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 						
 						//Global boxes
 						checkbox.setEnabled(true);
-						checkbox.setSelected(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1) >= 0);
+						checkbox.setSelected(main.config.getAvatarIndex(main.config.heroes.get(index),-1) >= 0);
 						combobox.clear();
 						for(int i = 0;i <= main.config.heroes.get(index).getAvatarCount()-1;i++) {
 							combobox.add(images[i],main.config.heroes.get(index).getAvatar(i).getName());
 						}
-						combobox.setEnabled(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1) >= 0);
-						if(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1) >= 0) {
-							combobox.setSelectedIndex(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1));
+						combobox.setEnabled(main.config.getAvatarIndex(main.config.heroes.get(index),-1) >= 0);
+						if(main.config.getAvatarIndex(main.config.heroes.get(index),-1) >= 0) {
+							combobox.setSelectedIndex(main.config.getAvatarIndex(main.config.heroes.get(index),-1));
 						}
 					}
 					change = true;
@@ -367,15 +367,15 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 					int index = herolist.getSelectedIndex();
 					
 					if(checkbox.isSelected()) {
-						main.config.property.setProperty(main.config.heroes.get(index).getName(),combobox.getSelectedIndex()+"");
+						main.config.property.setProperty(main.config.heroes.get(index).getName(),main.config.heroes.get(index).getAvatar(combobox.getSelectedIndex()).getKey());
 					}
 					else {
-						main.config.property.setProperty(main.config.heroes.get(index).getName(),-1+"");
+						main.config.property.setProperty(main.config.heroes.get(index).getName(),null);
 					}
 
-					combobox.setEnabled(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1) >= 0);
+					combobox.setEnabled(main.config.getAvatarIndex(main.config.heroes.get(index),-1) >= 0);
 					for(int i = 0;i <= main.config.heroes.get(index).getAvatarCount()-1;i++) {
-						boxes.get(i*2+1).setEnabled(!(main.config.property.getProperty(main.config.heroes.get(index).getName(),-1) >= 0));
+						boxes.get(i*2+1).setEnabled(!(main.config.getAvatarIndex(main.config.heroes.get(index),-1) >= 0));
 					}
 				}
 			}
@@ -385,8 +385,8 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(change && herolist.getSelectedIndex() != -1) {
-						//System.out.println("Saved:"+combobox.getSelectedIndex());
-						main.config.property.setProperty(main.config.heroes.get(herolist.getSelectedIndex()).getName(),combobox.getSelectedIndex()+"");
+						System.out.println("Saved:"+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(combobox.getSelectedIndex()).getKey());
+						main.config.property.setProperty(main.config.heroes.get(herolist.getSelectedIndex()).getName(),main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(combobox.getSelectedIndex()).getKey());
 					}
 				}
 			}
@@ -453,14 +453,26 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 	@Override
 	public void run() {
 		long time = System.currentTimeMillis();
+		boolean success = true;
 		String command = "";
+		progressbar.setValue(0);
 		
 		if(action == Gui.ACTION_APPLY) {
 			new Compile(main);
 			command = "Applying Modifcations";
 		}
 		else if(action == Gui.ACTION_UPDATE) {
-			new Update(main);
+			success = main.config.update();
+			if(success) {
+				try {
+					String[] cmd = {"java","-jar",main.PATH+"jcustom.jar"};
+					Runtime.getRuntime().exec(cmd);
+					
+					System.exit(0);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			command = "Update Check";
 		}
 		else if(action == Gui.ACTION_REFRESH) {
@@ -483,6 +495,6 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 		}
 		
 		progressbar.setValue(progressbar.getMaximum());
-		progresslabel.setText("Finished "+command+" in "+LLAccessories.toStringNumber((System.currentTimeMillis()-time)+"")+"ms.");
+		progresslabel.setText((success ? "Finished" : "Failed to")+" "+command+" "+(success ? "in" : "after")+" "+LLAccessories.toStringNumber((System.currentTimeMillis()-time)+"")+"ms.");
 	}
 }

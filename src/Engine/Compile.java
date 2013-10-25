@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -44,212 +45,248 @@ public class Compile {
 	
 	public Compile(Main main) {
 		this.main = main;
-		Gui gui = main.gui;
-		
-		int size = 0;
+
+		main.gui.progresslabel.setText("Applying modifications...");
+		main.gui.progressbar.setMaximum(1);
 		for(int i = 0;i <= main.config.heroes.size()-1;i++) {
-			size += main.config.heroes.get(i).getAvatarCount();
+			main.gui.progressbar.setMaximum(main.gui.progressbar.getMaximum()+main.config.heroes.get(i).getAvatarCount());
 		}
 		
-		gui.progressbar.setValue(0);
-		gui.progressbar.setMaximum(size+1);
-		gui.progresslabel.setText("Applying modifications...");
-		try {
-			LLInputStream in;
-			StringBuilder data = new StringBuilder();
-			ZipFile resources = new ZipFile(new File(main.config.property.getProperty("game","")+"resources0.s2z"));
-			
-			Transformer transformer;
-			
-			String folder = Main.PATH+"instances"+File.separator+System.currentTimeMillis()+File.separator;
-			
-			//Compiling heroes...
-			for(int i = 0;i <= main.config.heroes.size()-1;i++) {
-				Hero hero = main.config.heroes.get(i);
+		String folder = Main.PATH+"instances"+File.separator+System.currentTimeMillis()+File.separator;
+		
+		//Compiling heroes...
+		heroes:for(int i = 0;i <= main.config.heroes.size()-1;i++) {
+			Hero hero = main.config.heroes.get(i);
+
+			main.gui.progresslabel.setText("Compiling "+hero.getAvatar(0).getName()+"...");
+			main.log.print("Compiling "+hero.getAvatar(0).getName()+"...");
+			int allforce = main.config.getAvatarIndex(hero,-1);
+			for(int ii = 0;ii <= hero.getAvatarCount()-1;ii++) {
+				int index = allforce;
+				if(index < 0) {
+					index = main.config.getAvatarIndex(hero,ii);
+				}
 				
-				boolean dohero = false;
-				for(int ii = 0;ii <= hero.getAvatarCount()-1;ii++) {
-					int index = figureIndex(i,ii);
+				if(ii == index) {
+					if(ii == hero.getAvatarCount()-1) {
+						main.gui.progressbar.setValue(main.gui.progressbar.getValue()+hero.getAvatarCount());
+						continue heroes;
+					}
+					continue;
+				}
+				break;
+			}
+			//Global things;
+			Element orgheroentity = null, modheroentity = null;
+			try {
+				//Hero Entity;
+				orgheroentity = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(hero.getEntry()))).getDocumentElement();
+				orgheroentity.setAttribute("key",hero.getAvatar(0).getKey()); //Setting a key so later looks for modifers will be found;
+				modheroentity = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(hero.getEntry()))).getDocumentElement();
+				modheroentity.setAttribute("key",hero.getAvatar(0).getKey()); //Setting a key so later looks for modifers will be found;
+			} catch (IOException | SAXException | ParserConfigurationException e) {
+				main.log.print(e,"");
+			}
+
+			Vector<String> projectiles = new Vector<String>();
+			Vector<String> abilities = new Vector<String>();
+			
+			Enumeration entries = main.config.resources.entries();
+			while(entries.hasMoreElements()) {
+				String entry = entries.nextElement().toString();
+				
+				if(entry.startsWith("heroes/"+hero.getFolder()) && entry.endsWith(".entity")) {
+					//Projcetiles;
+					if(entry.contains("projectile")) {
+						projectiles.add(entry);
+					}
+					//Abilities
+					if(entry.contains("ability")) {
+						abilities.add(entry);
+					}
+				}
+			}
+			//Abilities
+			String[]	ability = new String[4];
+			Element[]	orgabilityentity = new Element[4];
+			Element[]	modabilityentity = new Element[4];
+			for(int ii = 0;ii <= abilities.size()-1;ii++) {
+				Element abilityelement;
+				try {
+					abilityelement = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(abilities.get(ii)))).getDocumentElement();
+					for(int iii = 0;iii <= ability.length-1;iii++) {
+						if(abilityelement.getAttribute("name").equalsIgnoreCase(orgheroentity.getAttribute("inventory"+iii))) {
+							ability[iii] = abilities.get(ii);
+							orgabilityentity[iii] = abilityelement;
+							orgabilityentity[iii].setAttribute("key",hero.getAvatar(0).getKey()); //Setting a key so later looks for modifers will be found;
+							modabilityentity[iii] = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(abilities.get(ii)))).getDocumentElement();
+							modabilityentity[iii].setAttribute("key",hero.getAvatar(0).getKey()); //Setting a key so later looks for modifers will be found;
+							
+							break;
+						}
+					}
+				} catch (IOException | SAXException | ParserConfigurationException e) {
+					main.log.print(e,"");
+				}
+			}
+			
+			for(int ii = 0;ii <= hero.getAvatarCount()-1;ii++) {
+				main.gui.progresslabel.setText("Compiling "+hero.getAvatar(ii).getName()+"...");
+				main.log.print("Compiling "+hero.getAvatar(ii).getName()+"...");
+				
+				int index = allforce;
+				if(index < 0) {
+					index = main.config.getAvatarIndex(hero,ii);
+				}
+				
+				//Modifying heroentity;
+				if(true) { //Creating a chamber to lock in a few varibles that I don't want to have in the future;
+					Element orgheromodifier = getModifier(hero.getAvatar(index).getKey(),orgheroentity);
+					Element modheromodifier = getModifier(hero.getAvatar(ii).getKey(),modheroentity);
 					
-					if(ii != index) {
-						dohero = true;
-						break;
+					//Changing the attributes;
+					//Models & Effects;
+					modheromodifier.setAttribute("portrait",getAttribute(orgheromodifier.getAttribute("portrait"),getAttribute(orgheroentity.getAttribute("portrait"),"")));
+					
+					modheromodifier.setAttribute("passiveeffect",getAttribute(orgheromodifier.getAttribute("passiveeffect"),getAttribute(orgheroentity.getAttribute("passiveeffect"),""))); //Doing this after the others due to "storepassiveeffect" 'might' need it and then it has to be with the original value;
+					modheromodifier.setAttribute("previewpassiveeffect",getAttribute(orgheromodifier.getAttribute("previewpassiveeffect"),getAttribute(orgheroentity.getAttribute("previewpassiveeffect"),getAttribute(orgheromodifier.getAttribute("passiveeffect"),orgheroentity.getAttribute("passiveeffect")))));
+					modheromodifier.setAttribute("storepassiveeffect","");
+					
+					modheromodifier.setAttribute("previewmodel",getAttribute(orgheromodifier.getAttribute("previewmodel"),getAttribute(orgheroentity.getAttribute("previewmodel"),"")));
+					modheromodifier.setAttribute("storepos",getAttribute(orgheromodifier.getAttribute("storepos"),getAttribute(orgheroentity.getAttribute("storepos"),"")));
+					modheromodifier.setAttribute("storescale",getAttribute(orgheromodifier.getAttribute("storescale"),getAttribute(orgheroentity.getAttribute("storescale"),"")));
+					
+					//Scales;
+					modheromodifier.setAttribute("preglobalscale",getAttribute(orgheromodifier.getAttribute("preglobalscale"),getAttribute(orgheroentity.getAttribute("preglobalscale"),"")));
+					modheromodifier.setAttribute("modelscale",getAttribute(orgheromodifier.getAttribute("modelscale"),getAttribute(orgheroentity.getAttribute("modelscale"),"")));
+					modheromodifier.setAttribute("effectscale",getAttribute(orgheromodifier.getAttribute("effectscale"),getAttribute(orgheroentity.getAttribute("effectscale"),"")));
+					modheromodifier.setAttribute("infoheight",getAttribute(orgheromodifier.getAttribute("infoheight"),getAttribute(orgheroentity.getAttribute("infoheight"),"")));
+					modheromodifier.setAttribute("tiltfactor",getAttribute(orgheromodifier.getAttribute("tiltfactor"),getAttribute(orgheroentity.getAttribute("tiltfactor"),"")));
+					modheromodifier.setAttribute("tiltspeed",getAttribute(orgheromodifier.getAttribute("tiltspeed"),getAttribute(orgheroentity.getAttribute("tiltspeed"),"")));
+					
+					//Sounds;
+					modheromodifier.setAttribute("selectedsound",getAttribute(orgheromodifier.getAttribute("selectedsound"),getAttribute(orgheroentity.getAttribute("selectedsound"),"")));
+					modheromodifier.setAttribute("selectedflavorsound",getAttribute(orgheromodifier.getAttribute("selectedflavorsound"),getAttribute(orgheroentity.getAttribute("selectedflavorsound"),"")));
+					modheromodifier.setAttribute("confirmmovesound",getAttribute(orgheromodifier.getAttribute("confirmmovesound"),getAttribute(orgheroentity.getAttribute("confirmmovesound"),"")));
+					modheromodifier.setAttribute("confirmattacksound",getAttribute(orgheromodifier.getAttribute("confirmattacksound"),getAttribute(orgheroentity.getAttribute("confirmattacksound"),"")));
+					modheromodifier.setAttribute("nomanasound",getAttribute(orgheromodifier.getAttribute("nomanasound"),getAttribute(orgheroentity.getAttribute("nomanasound"),"")));
+					modheromodifier.setAttribute("cooldownsound",getAttribute(orgheromodifier.getAttribute("cooldownsound"),getAttribute(orgheroentity.getAttribute("cooldownsound"),"")));
+					modheromodifier.setAttribute("tauntedsound",getAttribute(orgheromodifier.getAttribute("tauntedsound"),getAttribute(orgheroentity.getAttribute("tauntedsound"),"")));
+					modheromodifier.setAttribute("tauntkillsound",getAttribute(orgheromodifier.getAttribute("tauntkillsound"),getAttribute(orgheroentity.getAttribute("tauntkillsound"),"")));
+					
+					//Attacks;
+					modheromodifier.setAttribute("attackoffset",getAttribute(orgheromodifier.getAttribute("attackoffset"),getAttribute(orgheroentity.getAttribute("attackoffset"),"")));
+					modheromodifier.setAttribute("attackstarteffect",getAttribute(orgheromodifier.getAttribute("attackstarteffect"),getAttribute(orgheroentity.getAttribute("attackstarteffect"),"")));
+					modheromodifier.setAttribute("attackactioneffect",getAttribute(orgheromodifier.getAttribute("attackactioneffect"),getAttribute(orgheroentity.getAttribute("attackactioneffect"),"")));
+					modheromodifier.setAttribute("attackimpacteffect",getAttribute(orgheromodifier.getAttribute("attackimpacteffect"),getAttribute(orgheroentity.getAttribute("attackimpacteffect"),"")));
+					
+					//Model;
+					try {
+						String model = getModel(modheromodifier.getAttribute("model"),orgheromodifier.getAttribute("model"),hero.getAvatar(0).getKey());
+						
+						LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+"heroes/"+hero.getFolder()+"/"+modheromodifier.getAttribute("model"))));
+						out.writeString(model);
+						out.close();
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					//Projectile;
+					if(!orgheroentity.getAttribute("attackprojectile").isEmpty()) {
+						try {
+							String[] projectile = getProjectile(getAttribute(modheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),getAttribute(orgheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),projectiles.toArray(new String[projectiles.size()]));
+							
+							if(!new LLFile(folder+projectile[0],false).exists()) {
+							
+								LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+projectile[0])));
+								out.writeString(projectile[1]);
+								out.close();
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					//Abilities
+					for(int iii = 0;iii <= ability.length-1;iii++) {
+						if(ability[iii] != null) {
+							Element orgabilitymodifier = getModifier(hero.getAvatar(index).getKey(),orgabilityentity[iii]);
+							Element modabilitymodifier = getModifier(hero.getAvatar(ii).getKey(),modabilityentity[iii]);
+							
+							if(modabilitymodifier != null) {
+								if(orgabilitymodifier == null) {
+									orgabilitymodifier = orgabilityentity[iii];
+								}
+								
+								//Change attibutes...
+								modabilitymodifier.setAttribute("icon",getAttribute(orgabilitymodifier.getAttribute("icon"),getAttribute(orgabilityentity[iii].getAttribute("icon"),"")));
+								modabilitymodifier.setAttribute("casteffect",getAttribute(orgabilitymodifier.getAttribute("casteffect"),getAttribute(orgabilityentity[iii].getAttribute("casteffect"),"")));
+								modabilitymodifier.setAttribute("passiveeffect",getAttribute(orgabilitymodifier.getAttribute("passiveeffect"),getAttribute(orgabilityentity[iii].getAttribute("passiveeffect"),"")));
+							}
+						}
+					}
+				}
+				main.gui.progressbar.setValue(main.gui.progressbar.getValue()+1);
+			}
+			
+			//Hero Entity;
+			try {
+				
+				LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+hero.getEntry())));
+				out.writeString(xmlToString(modheroentity));
+				out.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+
+				for(int ii = 0;ii <= ability.length-1;ii++) {
+					if(ability[ii] != null) {
+						LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+ability[ii])));
+						out.writeString(xmlToString(modabilityentity[ii]));
+						out.close();
 					}
 				}
 				
-				if(dohero) {
-					Element entity = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(hero.getEntry()))).getDocumentElement();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		//Zip...
+		LLFile filefolder;
+		try {
+			filefolder = new LLFile(folder,false);
+			if(filefolder.exists()) {
+				main.gui.progresslabel.setText("Zipping resources...");
+				ZipOutputStream zut = new ZipOutputStream(new FileOutputStream(new LLFile(main.config.property.getProperty("Setting_resourcesCoN",main.config.property.getProperty("Setting_resources","")),true)));
+				
+				File[] files = filefolder.getAllFiles();
+				for(File file : files) {
+					LLInputStream zin = new LLInputStream(new FileInputStream(file));
+					String content = "";
 					
-					for(int ii = 0;ii <= hero.getAvatarCount()-1;ii++) {
-						gui.progresslabel.setText("Compiling "+hero.getAvatar(ii).getName()+"...");
-						
-						int index = figureIndex(i,ii);
-						
-						//Reading the modfied here and if there is none then make one by reading from the original!
-						Element modentity = figureFile(folder+hero.getEntry());
-						if(modentity == null) {
-							modentity = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(hero.getEntry()))).getDocumentElement();
-						}
-						
-						Element e = figureModifer(hero.getAvatar(index).getKey(),entity);
-						Element mode = figureModifer(hero.getAvatar(ii).getKey(),modentity);
-						
-						//Changing the attributes;
-						
-						//Models & Effects;
-						mode.setAttribute("portrait",getAttribute(e.getAttribute("portrait"),getAttribute(entity.getAttribute("portrait"),"")));
-						
-						mode.setAttribute("passiveeffect",getAttribute(e.getAttribute("passiveeffect"),getAttribute(entity.getAttribute("passiveeffect"),""))); //Doing this after the others due to "storepassiveeffect" 'might' need it and then it has to be with the original value;
-						mode.setAttribute("previewpassiveeffect",getAttribute(e.getAttribute("previewpassiveeffect"),getAttribute(entity.getAttribute("previewpassiveeffect"),getAttribute(e.getAttribute("passiveeffect"),entity.getAttribute("passiveeffect")))));
-						mode.setAttribute("storepassiveeffect","");
-						
-						mode.setAttribute("previewmodel",getAttribute(e.getAttribute("previewmodel"),getAttribute(entity.getAttribute("previewmodel"),"")));
-						mode.setAttribute("storepos",getAttribute(e.getAttribute("storepos"),getAttribute(entity.getAttribute("storepos"),"")));
-						mode.setAttribute("storescale",getAttribute(e.getAttribute("storescale"),getAttribute(entity.getAttribute("storescale"),"")));
-						
-						//Scales;
-						mode.setAttribute("preglobalscale",getAttribute(e.getAttribute("preglobalscale"),getAttribute(entity.getAttribute("preglobalscale"),"")));
-						mode.setAttribute("modelscale",getAttribute(e.getAttribute("modelscale"),getAttribute(entity.getAttribute("modelscale"),"")));
-						mode.setAttribute("effectscale",getAttribute(e.getAttribute("effectscale"),getAttribute(entity.getAttribute("effectscale"),"")));
-						mode.setAttribute("infoheight",getAttribute(e.getAttribute("infoheight"),getAttribute(entity.getAttribute("infoheight"),"")));
-						mode.setAttribute("tiltfactor",getAttribute(e.getAttribute("tiltfactor"),getAttribute(entity.getAttribute("tiltfactor"),"")));
-						mode.setAttribute("tiltspeed",getAttribute(e.getAttribute("tiltspeed"),getAttribute(entity.getAttribute("tiltspeed"),"")));
-						
-						//Sounds;
-						mode.setAttribute("selectedsound",getAttribute(e.getAttribute("selectedsound"),getAttribute(entity.getAttribute("selectedsound"),"")));
-						mode.setAttribute("selectedflavorsound",getAttribute(e.getAttribute("selectedflavorsound"),getAttribute(entity.getAttribute("selectedflavorsound"),"")));
-						mode.setAttribute("confirmmovesound",getAttribute(e.getAttribute("confirmmovesound"),getAttribute(entity.getAttribute("confirmmovesound"),"")));
-						mode.setAttribute("confirmattacksound",getAttribute(e.getAttribute("confirmattacksound"),getAttribute(entity.getAttribute("confirmattacksound"),"")));
-						mode.setAttribute("nomanasound",getAttribute(e.getAttribute("nomanasound"),getAttribute(entity.getAttribute("nomanasound"),"")));
-						mode.setAttribute("cooldownsound",getAttribute(e.getAttribute("cooldownsound"),getAttribute(entity.getAttribute("cooldownsound"),"")));
-						mode.setAttribute("tauntedsound",getAttribute(e.getAttribute("tauntedsound"),getAttribute(entity.getAttribute("tauntedsound"),"")));
-						mode.setAttribute("tauntkillsound",getAttribute(e.getAttribute("tauntkillsound"),getAttribute(entity.getAttribute("tauntkillsound"),"")));
-						
-						//Attacks;
-						mode.setAttribute("attackoffset",getAttribute(e.getAttribute("attackoffset"),getAttribute(entity.getAttribute("attackoffset"),"")));
-						mode.setAttribute("attackstarteffect",getAttribute(e.getAttribute("attackstarteffect"),getAttribute(entity.getAttribute("attackstarteffect"),"")));
-						mode.setAttribute("attackactioneffect",getAttribute(e.getAttribute("attackactioneffect"),getAttribute(entity.getAttribute("attackactioneffect"),"")));
-						mode.setAttribute("attackimpacteffect",getAttribute(e.getAttribute("attackimpacteffect"),getAttribute(entity.getAttribute("attackimpacteffect"),"")));
-						
-						//Model;
-						String path;
-						if(mode.getAttribute("model").startsWith("/")) {
-							path = mode.getAttribute("model");
-						}
-						else {
-							path = "heroes/"+hero.getFolder()+"/"+mode.getAttribute("model");
-						}
-						
-						LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+path)));
-						out.writeString(getModel(mode.getAttribute("model"),e.getAttribute("model"),resources,hero.getFolder()));
-						out.close();
-						
-						//Projectile;
-						if(!entity.getAttribute("attackprojectile").isEmpty()) {
-							Vector<String> projectiles = new Vector<String>();
-							
-							//Fetching projectiles;
-							Enumeration entries = resources.entries();
-							while(entries.hasMoreElements()) {
-								String entry = entries.nextElement().toString();
-								
-								if(entry.startsWith("heroes/"+hero.getFolder()) && entry.endsWith(".entity") && entry.contains("projectile")) {
-									projectiles.add(entry);
-								}
-							}
-							
-							String projectile = "";
-							String modprojectile = "";
-							
-							//Finding the right projectiles;
-							for(int iii = 0;iii <= projectiles.size()-1;iii++) {
-								String name = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(projectiles.get(iii)))).getDocumentElement().getAttribute("name");
-								
-								if(getAttribute(e.getAttribute("attackprojectile"),getAttribute(entity.getAttribute("attackprojectile"),"")).equals(name)) {
-									projectile = projectiles.get(iii);
-								}
-								if(getAttribute(mode.getAttribute("attackprojectile"),getAttribute(entity.getAttribute("attackprojectile"),"")).equals(name)) {
-									modprojectile = projectiles.get(iii);
-								}
-								
-								if(!projectile.isEmpty() && !modprojectile.isEmpty()) {
-									break;
-								}
-							}
-							if(projectile.isEmpty() || modprojectile.isEmpty()) {
-								System.out.println("This shouldn't have happend and now you've got to report this so I can fix it because else your fucked!");
-								return;
-							}
-							
-							//Time to modify UNLESS it's already been modified that is;
-							LLFile projectfile = new LLFile(folder+modprojectile);
-							if(!(projectfile.length() > 0)) {
-								Element p = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(projectile))).getDocumentElement();
-								Element modp = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(modprojectile))).getDocumentElement();
-								
-								//Changing the attributes;
-								
-								//Scales;
-								modp.setAttribute("gravity",getAttribute(p.getAttribute("gravity"),""));
-								modp.setAttribute("modelscale",getAttribute(p.getAttribute("modelscale"),"1.0"));
-								
-								//Effects;
-								path = "/"+projectile.replaceFirst("/\\w+\\.{1}entity","/");
-								while(path.contains("\\")) {
-									path.replace("\\","/");
-								}
-								
-								String[] attributes = {"model","impacteffect","traileffect"};
-								for(int iii = 0;iii <= attributes.length-1;iii++) {
-									String fixedpath = p.getAttribute(attributes[iii]);
-									
-									if(!fixedpath.startsWith("/") && !fixedpath.isEmpty()) {
-										fixedpath = path+fixedpath;
-										
-										while(fixedpath.contains("/../")) {
-											fixedpath = fixedpath.replaceFirst("/\\w+/\\.{2}/","/");
-										}
-									}
-									
-									modp.setAttribute(attributes[iii],fixedpath);
-								}
-								
-								//Write it;
-								transformer = TransformerFactory.newInstance().newTransformer();
-								transformer.transform(new DOMSource(modp),new StreamResult(projectfile));
-							}
-						}
-						//Abilities;
-						Vector<String> abilitiesfiles = new Vector<String>();
-						
-						//Fetching abilities;
-						Enumeration entries = resources.entries();
-						while(entries.hasMoreElements()) {
-							String entry = entries.nextElement().toString();
-							
-							if(entry.startsWith("heroes/"+hero.getFolder()) && entry.endsWith(".entity") && entry.contains("ability")) {
-								abilitiesfiles.add(entry);
-							}
-						}
-						
-						String[] abilities = {"","","",""};
-						
-						//Finding the right abilities;
-						for(int iii = 0;iii <= abilities.length-1;iii++) {
-							for(int iiii = 0;iiii <= abilitiesfiles.size()-1;iiii++) {
-								String name = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(abilitiesfiles.get(iiii)))).getDocumentElement().getAttribute("name");
-								
-								if(entity.getAttribute("inventory"+iii).equals(name)) {
-									abilities[iii] = abilitiesfiles.get(iiii);
-									break;
-								}
-							}
-							
-							if(abilities[iii].isEmpty()) {
-								System.out.println("Fuck me,");
-								return;
-							}
-						}
+					while(zin.available() > 0) {
+						content += zin.readString(4*4*1024);
+					}
+					zin.close();
+					
+					String path = file.getAbsolutePath().substring(folder.length()).replaceAll("\\\\","/");
+					
+					zut.putNextEntry(new ZipEntry(path));
+					for(int i = 0;i <= content.length()-1;i++) {
+						zut.write((int) content.charAt(i));
+					}
+					zut.closeEntry();
+				}
+				zut.close();
+			}
+			else {
+				new LLFile(main.config.property.getProperty("game","")+"resourcesCoN.s2z",true).delete();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+				/*
 						
 						//Extracting to see if required a modification;
 						for(int iii = 0;iii <= abilities.length-1;iii++) {
@@ -326,7 +363,7 @@ public class Compile {
 															if(!(file.length() > 0)) {
 																StringBuilder sb = new StringBuilder();
 																
-																ZipEntry zipentry = resources.getEntry(ae.substring(1));
+																ZipEntry zipentry =main.config.resources.getEntry(ae.substring(1));
 																if(zipentry == null) {
 																	System.out.println("NullPointerException: "+ae);
 																	continue;
@@ -367,103 +404,83 @@ public class Compile {
 								}
 							}
 						}
-						
-						//Output
-						transformer = TransformerFactory.newInstance().newTransformer();
-						transformer.transform(new DOMSource(modentity),new StreamResult(new File(folder+hero.getEntry())));
-						
-						gui.progressbar.setValue(gui.progressbar.getValue()+1);
 					}
 				}
-			}
-			
-			LLFile filefolder = new LLFile(folder,false);
-			if(filefolder.exists()) {
-				gui.progresslabel.setText("Zipping resources...");
-				ZipOutputStream zut = new ZipOutputStream(new FileOutputStream(new LLFile(main.config.property.getProperty("game","")+"resourcesCoN.s2z",true)));
-				
-				File[] files = filefolder.getAllFiles();
-				for(File file : files) {
-					LLInputStream zin = new LLInputStream(new FileInputStream(file));
-					String content = "";
-					
-					while(zin.available() > 0) {
-						content += zin.readString(4*4*1024);
-					}
-					zin.close();
-					
-					String path = file.getAbsolutePath().substring(folder.length()).replaceAll("\\\\","/");
-					
-					zut.putNextEntry(new ZipEntry(path));
-					for(int i = 0;i <= content.length()-1;i++) {
-						zut.write((int) content.charAt(i));
-					}
-					zut.closeEntry();
-					
-					//System.out.println(path);
-				}
-				
-				zut.close();
-			}
-			else {
-				new LLFile(main.config.property.getProperty("game","")+"resourcesCoN.s2z",true).delete();
-			}
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerFactoryConfigurationError e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
+			}*/
 	}
 	
-	public int figureIndex(int i,int ii) {
-		String name = main.config.heroes.get(i).getName();
-		String key	= main.config.heroes.get(i).getAvatar(ii).getKey();
+	private String[] getProjectile(String modprojectile, String orgprojectile,String[] projectiles) {
+		Element orgprojectileentity = null,	modprojectileentity = null;
+		String	orgprojectilepath	= null,	modprojectilepath	= null;
 		
-		if(main.config.property.getProperty(name,-1) > -1) {
-			return main.config.property.getProperty(name,-1);
+		//Finding the right projectiles;
+		for(String projectile:projectiles) {
+			Element element;
+			try {
+				element = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(projectile))).getDocumentElement();
+			} catch (SAXException | IOException | ParserConfigurationException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+			if(orgprojectile.equalsIgnoreCase(element.getAttribute("name"))) {
+				orgprojectilepath = projectile;
+				orgprojectileentity = element;
+			}
+			if(modprojectile.equalsIgnoreCase(element.getAttribute("name"))) {
+				modprojectilepath = projectile;
+				modprojectileentity = element;
+			}
+			
+			if(orgprojectileentity != null && modprojectileentity != null) {
+				break;
+			}
 		}
-		else {
-			return main.config.property.getProperty(name+"."+key,ii);
-		}
-	}
-	public Element figureFile(String filepath) throws FileNotFoundException, SAXException, IOException, ParserConfigurationException {
-		LLFile file = new LLFile(filepath);
-		
-		if(file.length() > 0) {
-			return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(file)).getDocumentElement();
-		}
-		else {
+		if(orgprojectileentity == null || modprojectileentity == null) {
 			return null;
 		}
+		
+		
+		//Changing the attributes;
+		//Scales;
+		modprojectileentity.setAttribute("gravity",getAttribute(orgprojectileentity.getAttribute("gravity"),""));
+		modprojectileentity.setAttribute("modelscale",getAttribute(orgprojectileentity.getAttribute("modelscale"),"1.0"));
+		
+		//Effects;
+		modprojectileentity.setAttribute("model",fixPath(getAttribute(orgprojectileentity.getAttribute("model"),""),orgprojectilepath));
+		modprojectileentity.setAttribute("impacteffect",fixPath(getAttribute(orgprojectileentity.getAttribute("impacteffect"),""),orgprojectilepath));
+		modprojectileentity.setAttribute("traileffect",fixPath(getAttribute(orgprojectileentity.getAttribute("traileffect"),""),orgprojectilepath));
+		
+		String[] re = {modprojectilepath,xmlToString(modprojectileentity)};
+		return re;
 	}
-	public Element figureModifer(String key,Element entity) {
-		if(key == null) {
+	public Element getModifier(String key,Element entity,String tag) {
+		if(entity.getAttribute("key").equalsIgnoreCase(key)) {
 			return entity;
 		}
 		
-		NodeList list = entity.getElementsByTagName("modifier");
-		
+		NodeList list = entity.getElementsByTagName(tag);
 		for(int i = 0;i <= list.getLength()-1;i++) {
 			Element element = (Element) list.item(i);
 			
-			if(element.getAttribute("key").toLowerCase().equals(key.toLowerCase())) {
+			if(element.getAttribute("key").equalsIgnoreCase(key)) {
 				return element;
 			}
 		}
-		
-		//System.out.println("Shits about to happen, "+entity.getAttribute("name")+" "+key);
 		return null;
+	}
+	public Element getModifier(String key,Element entity) {
+		return getModifier(key,entity,"modifier");
+	}
+	private String fixPath(String fix,String location) {
+		if(!fix.startsWith("/") && !fix.isEmpty()) {
+			fix = "/"+location.replaceFirst("/\\w+\\.{1}entity","/")+fix;
+			
+			while(fix.contains("/../")) {
+				fix = fix.replaceFirst("/\\w+/\\.{2}/","/");
+			}
+		}
+		return fix;
 	}
 	public String getAttribute(String attribute,String backup) {
 		if(attribute.isEmpty()) {
@@ -471,19 +488,30 @@ public class Compile {
 		}
 		return attribute;
 	}
+	private String xmlToString(Element xml) {
+		StringWriter sw = new StringWriter();
+		try {
+			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(xml),new StreamResult(sw));
+		} catch (TransformerException | TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return sw.toString()/*.replace("?>","?>\n").replace("\"","\"\n").replace("=\"\n","=\"")*/;
+	}
 	
-	public String getModel(String modeli,String modelii,ZipFile zf,String key0) {
+	private String getModel(String modeli,String modelii,String key0) {
 		String[] s = new String[2];
 		s[0] = "";
 		s[1] = "";
 		//Reading the hero entity;
-		ZipEntry ze = zf.getEntry("heroes"+"/"+key0+"/"+modeli);
+		ZipEntry ze = main.config.resources.getEntry("heroes"+"/"+key0+"/"+modeli);
 		long size = ze.getSize();
 		if (size > 0) {
 			BufferedReader br;
 			try {
 				br = new BufferedReader(
-				new InputStreamReader(zf.getInputStream(ze)));
+				new InputStreamReader(main.config.resources.getInputStream(ze)));
 			String linebreak;
 			while ((linebreak = br.readLine()) != null) {
 				s[0] += linebreak+"\n";
@@ -494,13 +522,13 @@ public class Compile {
 			}
 		}
 		//Reading the hero entity;
-		ze = zf.getEntry("heroes"+"/"+key0+"/"+modelii);
+		ze = main.config.resources.getEntry("heroes"+"/"+key0+"/"+modelii);
 		size = ze.getSize();
 		if (size > 0) {
 			BufferedReader br;
 			try {
 				br = new BufferedReader(
-				new InputStreamReader(zf.getInputStream(ze)));
+				new InputStreamReader(main.config.resources.getInputStream(ze)));
 			String linebreak;
 			while ((linebreak = br.readLine()) != null) {
 				s[1] += linebreak+"\n";

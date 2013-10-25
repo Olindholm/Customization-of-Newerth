@@ -82,7 +82,7 @@ public class LLProperty {
 				index = index-area/2-1;
 			}
 			else {
-				return properties.get(index);
+				return asd;
 			}
 		}
 		
@@ -162,7 +162,7 @@ public class LLProperty {
 		for(int i = 0;i <= properties.size()-1;i++) {
 			String[] property = properties.get(i);
 			
-			ut.writeString("\n"+property[0]+"="+property[1].replace("\n","\\n"));
+			ut.writeString("\n"+property[0]+"="+property[1]+"".replace("\n","\\n"));
 		}
 		
 		ut.close();

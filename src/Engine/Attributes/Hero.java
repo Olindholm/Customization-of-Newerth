@@ -18,7 +18,7 @@ public class Hero implements Comparable<Hero> {
 		this.entry = entry;
 		String[] split = entry.split("/"); this.folder = split[split.length-2];
 		
-		this.addAvatar(new Avatar(name,null));
+		this.addAvatar(new Avatar(name,folder));
 	}
 	
 	//Set;
