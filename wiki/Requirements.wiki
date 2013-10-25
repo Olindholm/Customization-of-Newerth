@@ -1,0 +1,6 @@
+#summary Requirements
+= Requirements =
+There isn't much you require but some things.
+ * [http://www.java.com/en/download/index.jsp Java](JRE6 and above.)
+ * Run as Administrer(You will have to make sure that Java has administrer rights.)
+ * [http://forums.heroesofnewerth.com/showthread.php?t=111678 HoNModManager(Java)](Not the default one, the Java version is the only one that will work.)

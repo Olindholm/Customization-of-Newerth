@@ -1,0 +1,52 @@
+#summary CoN file information.
+
+= Files =
+
+CoN uses some files but not to many. CoN's engine folder where it is keeping all it's current files is:
+{{{
+%appdata%/lindholm/customization-of-newerth/
+}}}
+In it's engine folder you should be able to find the following files:
+{{{
+config.ini
+exception.log
+resources.dat
+textures.dat
+(CoN).temp(While downloading a new version this file will be temporaly there and deleted after the update has completed)
+}}}
+If any of these files were to be deleted it could cause CoN to give critical errors. Although if there exist other files then this feel free to delete them, it shouldn't effect CoN at all.
+
+== File information ==
+Here's more specific information about every file.
+=== config.ini ===
+This file stores important information about settings for example, `units` `announcers` `taunts` `output folder`.
+
+Unit example:
+{{{
+courier=true
+courier0=0
+courier1=1
+courier2=2
+courier3=3
+courier4=4
+courier5=5
+courier6=6
+courier7=7
+courier8=8
+courier9=9
+}}}
+Here as you can see first you see the just the units keyname equal to true which means the alt is true and should be generated as an unit with avatars. Secoundly you can see all the units keynames which a specific number representing which alt of the unit which then equals to which avatar to be forced to be shown. In this case they are all on default which wouldn't cause any changes.
+
+Other common keys:
+{{{
+hondir=C\:\\Program Files (x86)\\Heroes of Newerth
+}}}
+This is pretty obious this key is what it remembering the location of your installed HoN.
+=== exception.log ===
+This file stores important information about cought exceptions here is an example for what the information inside could look like:
+{{{
+moraxus:java.lang.String.substring(Unknown Source)
+	Engine.Attributes.Hero.getXAML(Hero.java:152)
+	Engine.Gui.run(Gui.java:462)
+	java.lang.Thread.run(Unknown Source)
+}}}

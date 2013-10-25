@@ -1,0 +1,20 @@
+#summary Error code list
+= Error code's =
+
+Here is the list of the error codes that can be thrown, the errors are also printed with more specific information in your `exception.log` file.
+
+|| Error code || File not found? || Access denied? || Corrupted file? || Connection timed out? || Explaination ||
+|| 1 || - || x || - || - || The software couldn't access/create the `exception.log` file. ||
+|| 2 || x || x || x || - || The software couldn't read/access the `textures.dat` file. ||
+|| 3 || x || x || x || - || The software couldn't read/access HoN's `resources.s2z` file. ||
+|| 4 || - || - || x || x || The software couldn't download/read the `minor.sht` file. ||
+|| 5 || - || - || x || x || The software couldn't download/read the `resources.dat` or `textures.dat` file. ||
+|| 6 || x || x || x || - || The software couldn't read/access the `resources.dat` file. ||
+|| 7 || - || x || - || - || The software write to `name.honmod` ||
+|| 8 || - || - || x || x || The software couldn't download/read the `major.str` file. ||
+|| 9 || x || - || x || x || The software couldn't download/read/run the `(CoN).jar` file. ||
+|| 10 || - || - || x || x || The software couldn't download/read the `changelog.dat` file. ||
+|| 11 || - || - || x || x || The software couldn't download/read the `buglog.str` file. ||
+|| 12 || x || - || - || - || The software couldn't read from the specified file inside `resources.s2z`. This could be caused by a bug inside the `resources.dat` or that the HoN version isn't up to date. ||
+|| 13 || - || - || - || - || - ||
+|| 14 || - || - || - || - || - ||

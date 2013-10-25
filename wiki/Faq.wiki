@@ -1,0 +1,10 @@
+#summary Frequently asked questions
+
+= Frequently asked questions =
+
+|| *Question* || *Answer* ||
+|| What does this error code mean? || The error code shows what coused the software to error. Look up error code's [http://code.google.com/p/customization-of-newerth/wiki/ErrorCodeList here]. ||
+|| Why is CoN incompatible with any revelant indicator mod? || CoN and the indicator both are trying to modify the same file and sometimes one of these mods edit a sertain string that the other mod req to work. ||
+|| What is config.ini? || It's a very important file that stores settings for more information please look it up [http://code.google.com/p/customization-of-newerth/wiki/Files here]. ||
+|| What is all the files in %appdata%/lindholm/customization-of-newerth/? || This is CoN's engine folder and all the files can be looked up [http://code.google.com/p/customization-of-newerth/wiki/Files here]. ||
+|| Why is the `compile` button disabled? || The button disbles itself when error code 3 is thrown.  Look up error code's [http://code.google.com/p/customization-of-newerth/wiki/ErrorCodeList here]. ||
