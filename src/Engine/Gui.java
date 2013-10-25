@@ -297,7 +297,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 										@Override
 										public void actionPerformed(ActionEvent e) {
 											if(change && herolist.getSelectedIndex() != -1) {
-												System.out.println("Saving..."+main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey()+" to "+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(boxes.get(boxindex).getSelectedIndex()).getKey());
+												//System.out.println("Saving..."+main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey()+" to "+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(boxes.get(boxindex).getSelectedIndex()).getKey());
 												main.config.property.setProperty(main.config.heroes.get(herolist.getSelectedIndex()).getName()+"."+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(altindex).getKey(),main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(boxes.get(boxindex).getSelectedIndex()).getKey());
 											}
 										}
@@ -395,7 +395,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if(change && herolist.getSelectedIndex() != -1) {
-						System.out.println("Saved:"+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(combobox.getSelectedIndex()).getKey());
+						//System.out.println("Saved:"+main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(combobox.getSelectedIndex()).getKey());
 						main.config.property.setProperty(main.config.heroes.get(herolist.getSelectedIndex()).getName(),main.config.heroes.get(herolist.getSelectedIndex()).getAvatar(combobox.getSelectedIndex()).getKey());
 					}
 				}
@@ -494,7 +494,8 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 			
 			if(success) {
 				try {
-					Runtime.getRuntime().exec(new LLFile(main.config.property.getProperty("Setting_Resources",""),false).getParentFile().getParentFile().getAbsolutePath()+File.separator+"hon.exe");
+					String[] cmd = {new LLFile(main.config.property.getProperty("Setting_Resources",""),false).getParentFile().getParentFile().getAbsolutePath()+File.separator+"hon.exe"};
+					Runtime.getRuntime().exec(cmd);
 					
 					main.exit();
 				} catch (IOException e1) {

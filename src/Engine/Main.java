@@ -4,8 +4,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import Doodads.LLFile;
 import Doodads.LLLogger;
+import Interface.LLGui;
 
 
 public class Main {
@@ -15,7 +18,7 @@ public class Main {
 	//STATIC variables;
 	public static final String NAME		= "Customization of Newerth";
 	public static final String BRANCH	= "The New Age";
-	public static final String VERSION	= "3.0.0.8";
+	public static final String VERSION	= "3.0.0.9";
 	public static final String PATH		= System.getenv("APPDATA")+File.separator+"Lindholm"+File.separator+NAME+File.separator;
 	
 	//Variables;
@@ -41,7 +44,7 @@ public class Main {
 		gui = new Gui(this);
 		
 		if(config.property.getProperty("Setting_Update",true)) {
-			gui.actionPerformed(new ActionEvent(new Object(),0,Gui.ACTION_UPDATE+""));
+			gui.actionPerformed(new ActionEvent(this,0,Gui.ACTION_UPDATE+""));
 		}
 		while(gui.run.isAlive()) {
 			try {
@@ -51,7 +54,7 @@ public class Main {
 			}
 		}
 		if(config.property.getProperty("Setting_Refresh",true)) {
-			gui.actionPerformed(new ActionEvent(new Object(),0,Gui.ACTION_REFRESH+""));
+			gui.actionPerformed(new ActionEvent(this,0,Gui.ACTION_REFRESH+""));
 		}
 	}
 	//Set;

@@ -18,6 +18,8 @@ Table of content,
 			2.5.1 Terms
 			2.5.2 Breaches
 			2.5.3 Contact
+		2.6 Use
+			2.6.1 Personal-use
 			
 ------------------------------------------------------------------------------
 
@@ -58,14 +60,17 @@ Table of content,
 		This also includes that you may not upload this software to any file-sharing or file-hosting site or service.
 	2.5 Terms
 		2.5.1 Terms
-			The holder or host of CoN(at the moment Lindholm) may add, change remove any terms at any given time.
+			The holder or host of CoN(at the moment Lindholm) may add, change or remove any terms at any given time without notifications.
 			
 			If presented in court of a case where something is defined but not given a value to the representetive of CoN, Lindholm may say a value to resolve the case.
 		2.5.2 Breaches
 			If any of these terms are not followed properly, aka a breach in the terms Lindholm have the right to end or limit the contract aswell as fine you for damages caused.
 		2.5.3 Contact
 			If you questions occur about the terms of agreement you are more than welcome to email Wiggy0boy@gmail.com and hopefully get an answer to your question.
-			
-	I herby acknowledge taht I have read and understood the foregoing terms of argeement and agree to follow and bound me with these terms and conditions of this use.
+	2.6 Use
+		2.6.1 Personal-use
+			The resources edited or modified through CoN may only be used for personal use.
+		
+	I herby acknowledge that I have read and understood the foregoing terms of argeement and agree to follow and bound me with these terms and conditions of this use.
 
 ------------------------------------------------------------------------------

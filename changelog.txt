@@ -24,7 +24,10 @@ Table of content,
 			3.0.0.7
 				General
 				Bugs & Fixes
-			3.0.0.7
+			3.0.0.8
+				Bugs & Fixes
+			3.0.0.9
+				General
 				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
@@ -77,4 +80,14 @@ Table of content,
 	3.0.0.8
 		== Bugs & Fixes ==
 			- Fixed a bug that made CoN unable to zip it's archive if the file was not already existing(Mostly only noticable for people who never used it before)
+	
+	3.0.0.9
+		== General ==
+			- Readded support for playeffect(This should fix abilities for alot of heroes but not all, e.g. HellBringers ultimate)
+			- Added projectile & playeffect playalong compatability(This should fix abilities such as Devourers hook)
+			- Added a License Agreement window.
+		
+		== Bugs & Fixes ==
+			- Fixed a bug which occured sometimes when trying to launch HoN but it wouldn't launch
+			- Fixed so that CoN won't add avatars who are broken with a dublicated key
 	

@@ -16,6 +16,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,6 +53,7 @@ import Doodads.LLOutputStream;
 import Doodads.LLProperty;
 import Engine.Attributes.Avatar;
 import Engine.Attributes.Hero;
+import Interface.LLGui;
 
 public class Config {
 	//STATIC variables;
@@ -79,6 +82,27 @@ public class Config {
 		}
 		
 		//Terms of Argement;
+		if(!property.getProperty("Setting_version","").equalsIgnoreCase(Main.VERSION)) {
+			try {
+				LLInputStream in;
+				StringBuilder data = new StringBuilder();
+				
+				in = new LLInputStream(new FileInputStream(new LLFile(Main.PATH+"license.txt",false)));
+				while(in.available() > 0) {
+					data.append(in.readString(1024*16));
+				}
+				in.close();
+
+				if(LLGui.show("License Agreement","Please read the following license agreement carefully",data.toString(),new String[] {"I Agree and accept","I Disagree"}) != 0) {
+					System.exit(0);
+				}
+				
+				
+				property.setProperty("Setting_version",Main.VERSION);
+			} catch (IOException e) {
+				main.log.print(e,"Failed to display the license, check out the licesse at: https://plus.google.com/104710093754514390547/about",true);
+			}
+		}
 	}
 	//Set;
 	
@@ -245,7 +269,7 @@ public class Config {
 			
 			gui.progressbar.setMaximum(list.getLength()+heroes.size()+heroes.size());
 			
-			for(int i = 0;i <= list.getLength()-1;i++) {
+			instances:for(int i = 0;i <= list.getLength()-1;i++) {
 				Element instance = (Element) list.item(i);
 				
 				if(instance.getAttribute("name").equalsIgnoreCase("altAvatarPreviewPanel")) {
@@ -259,17 +283,32 @@ public class Config {
 					String name = stringtable.substring(index1,index2);
 					gui.progresslabel.setText("Locating avatars... "+name);
 					
-					//Checking if it's ultimate, then ignore it.
-					if(instance.getAttribute("ultimateAvatar").equalsIgnoreCase("true")) {
-						main.log.print("Ignoring ultimate avatar "+name);
-						gui.progressbar.setValue(gui.progressbar.getValue()+1);
-						continue;
-					}
-					
 					//Finding which hero it belongs to?
 					for(int ii = 0;ii <= heroes.size()-1;ii++) {
 						if(instance.getAttribute("heroName").equals(heroes.get(ii).getName())) {
-							heroes.get(ii).addAvatar(new Avatar(name,key));
+							for(int iii = 0;iii <= heroes.get(ii).getAvatarCount()-1;iii++) {
+								if(heroes.get(ii).getAvatar(iii).getKey().equalsIgnoreCase(key)) {
+									main.log.print("Ignoring dublicated-key avatar "+name);
+									gui.progressbar.setValue(gui.progressbar.getValue()+1);
+									continue instances;
+								}
+							}
+							for(int iii = 0;iii <= heroes.get(ii).getUltimateCount()-1;iii++) {
+								if(heroes.get(ii).getUltimate(iii).getKey().equalsIgnoreCase(key)) {
+									main.log.print("Ignoring dublicated-key avatar "+name);
+									gui.progressbar.setValue(gui.progressbar.getValue()+1);
+									continue instances;
+								}
+							}
+							
+							//Checking if it's ultimate, then ignore it.
+							if(instance.getAttribute("ultimateAvatar").equalsIgnoreCase("true")) {
+								main.log.print("Ignoring ultimate avatar "+name);
+								heroes.get(ii).addUltimate(new Avatar(name,key));
+							}
+							else {
+								heroes.get(ii).addAvatar(new Avatar(name,key));
+							}
 							break;
 						}
 					}
@@ -662,7 +701,7 @@ public class Config {
 					String model = getModel(modheromodifier.getAttribute("model"),orgheromodifier.getAttribute("model"),hero.getAvatar(0).getKey());
 					
 					LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+"heroes/"+hero.getFolder()+"/"+modheromodifier.getAttribute("model"))));
-					out.writeString(model);
+					out.writeString(stamp(model));
 					out.close();
 					
 				} catch (IOException e) {
@@ -670,17 +709,9 @@ public class Config {
 				}
 				//Projectile;
 				if(!orgheroentity.getAttribute("attackprojectile").isEmpty()) {
-					String[] projectile = getProjectile(getAttribute(modheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),getAttribute(orgheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),projectiles.toArray(new String[projectiles.size()]));
-					try {
-						if(!new LLFile(folder+projectile[0],false).exists()) {
-						
-							LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+projectile[0])));
-							out.writeString(projectile[1]);
-							out.close();
-						}
-					} catch (IOException e) {
-						main.log.print(e,"Failed to write to "+projectile[0],true);
-					}
+					
+					String[] keys = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
+					getProjectile(getAttribute(modheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),getAttribute(orgheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),projectiles.toArray(new String[projectiles.size()]),keys,folder);
 				}
 				//Abilities
 				for(int iii = 0;iii <= ability.length-1;iii++) {
@@ -698,31 +729,22 @@ public class Config {
 							modabilitymodifier.setAttribute("casteffect",getAttribute(orgabilitymodifier.getAttribute("casteffect"),getAttribute(orgabilityentity[iii].getAttribute("casteffect"),"")));
 							modabilitymodifier.setAttribute("passiveeffect",getAttribute(orgabilitymodifier.getAttribute("passiveeffect"),getAttribute(orgabilityentity[iii].getAttribute("passiveeffect"),"")));
 							
+							//if(orgabilitymodifier.getElementsByTagName("hasmodifier").getLength() > 0 && !orgabilitymodifier.getAttribute("key").equalsIgnoreCase(hero.getAvatar(0).getKey())) System.out.println(ability[iii]);
+							
 							//Projectile;
 							if(!orgabilityentity[iii].getAttribute("projectile").isEmpty()) {
-								String[] projectile = getProjectile(getAttribute(modabilitymodifier.getAttribute("projectile"),orgabilityentity[iii].getAttribute("projectile")),getAttribute(orgabilitymodifier.getAttribute("projectile"),orgabilityentity[iii].getAttribute("projectile")),projectiles.toArray(new String[projectiles.size()]));
 								
-								try {
-									if(!new LLFile(folder+projectile[0],false).exists()) {
-									
-										LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+projectile[0])));
-										out.writeString(projectile[1]);
-										out.close();
-									}
-								} catch (IOException e) {
-									main.log.print(e,"Failed to write to "+projectile[0],true);
-								}
-							}
-							
-							NodeList list = orgabilitymodifier.getChildNodes();
-							for(int n = 0;n <= list.getLength()-1;n++) {
-								if(list.item(n).getNodeType() == Node.ELEMENT_NODE) {
-									if(!list.item(n).getNodeName().contains("on") && !list.item(n).getNodeName().equals("modifier")) {
-										System.out.println(list.item(n).getNodeName());
-									}
-								}
+								String[] keys = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
+								getProjectile(getAttribute(modabilitymodifier.getAttribute("projectile"),orgabilityentity[iii].getAttribute("projectile")),getAttribute(orgabilitymodifier.getAttribute("projectile"),orgabilityentity[iii].getAttribute("projectile")),projectiles.toArray(new String[projectiles.size()]),keys,folder);
 							}
 						}
+						
+						//Onimpact etc... private void On(Element[] element,String[] filepath,String[] keys,String folder) {
+						Element[] one = {orgabilityentity[iii],orgabilitymodifier,modabilitymodifier};
+						String[] onpath = {ability[iii],ability[iii]};
+						String[] onkey = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
+						On(one,onpath,onkey,folder);
+						
 					}
 				}
 				main.gui.progressbar.setValue(main.gui.progressbar.getValue()+1);
@@ -732,7 +754,7 @@ public class Config {
 			try {
 				
 				LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+hero.getEntry())));
-				out.writeString(xmlToString(modheroentity));
+				out.writeString(stamp(xmlToString(modheroentity)));
 				out.close();
 				
 			} catch (IOException e) {
@@ -743,8 +765,15 @@ public class Config {
 				try {
 					if(ability[ii] != null) {
 						LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+ability[ii])));
-						out.writeString(xmlToString(modabilityentity[ii]));
+						String abilityxml = stamp(xmlToString(modabilityentity[ii]));
+						out.writeString(abilityxml);
 						out.close();
+						
+						/*if(abilityxml.contains("hasmodifier")) {
+							System.out.println(ability[ii]);
+						}*/
+						
+						
 					}
 				} catch (IOException e) {
 					main.log.print(e,"Failed to write to "+ability[ii],true);
@@ -808,7 +837,82 @@ public class Config {
 		return true;
 	}
 	
-	private String[] getProjectile(String modprojectile, String orgprojectile,String[] projectiles) {
+	private Vector<Element> runOn(Element element,String key) {
+		Vector<Element> vector = new Vector<Element>();
+		Element[] children = getChildTags(element,"*");
+		
+		boolean elsi = false;
+		
+		for(Element child : children) {
+			if(elsi) { //If the last tag was hasmodifier with a acceptable altkey the else tag should be denied.
+				if(child.getTagName().equalsIgnoreCase("else")) {
+					continue;
+				}
+				
+				elsi = false;
+			}
+			
+			if(child.getTagName().equalsIgnoreCase("hasmodifier")) {
+				if(child.getAttribute("name").toLowerCase().contains("alt")
+				|| child.getAttribute("name").toLowerCase().contains("female")
+				|| child.getAttribute("name").toLowerCase().contains("reskin")
+				|| child.getAttribute("name").toLowerCase().contains("classic")) {
+					//If the modifier is an alt modifier
+					if(child.getAttribute("name").equalsIgnoreCase(key)) { //If this is the avatars modifier(specified with the key(name attribute))
+						vector.addAll(runOn(child,key));
+						elsi = true;
+					}
+				}
+				else { //Else it's another kind of modifier, let's look inside!
+					vector.addAll(runOn(child,key));
+				}
+			}
+			else if(child.getTagName().equalsIgnoreCase("playeffect")
+				 || child.getTagName().equalsIgnoreCase("applystate")
+				 || child.getTagName().equalsIgnoreCase("spawnunit")
+				 || child.getTagName().equalsIgnoreCase("spawnprojectile")
+				 || child.getTagName().equalsIgnoreCase("spawnaffector")) {
+				vector.add(child);
+			}
+			else {
+				vector.addAll(runOn(child,key));
+			}
+		}
+		
+		return vector;
+	}
+	/**
+	 * 
+	 * @param element
+	 * @param tag The specific name of the tags you want. * will return all children.
+	 * @return
+	 */
+	private Element[] getChildTags(Element element,String tag) {
+		int l = 0;
+		NodeList list = element.getChildNodes();
+		for(int i = 0;i <= list.getLength()-1;i++) {
+			if(list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+				if(list.item(i).getNodeName().equalsIgnoreCase(tag) || tag.equals("*")) {
+					l++;
+				}
+			}
+		}
+		
+		Element[] array = new Element[l];
+		l = 0;
+		for(int i = 0;i <= list.getLength()-1;i++) {
+			if(list.item(i).getNodeType() == Node.ELEMENT_NODE) {
+				if(list.item(i).getNodeName().equalsIgnoreCase(tag) || tag.equals("*")) {
+					array[l] = (Element) list.item(i);
+					l++;
+				}
+			}
+		}
+		
+		return array;
+	}
+	
+	private void getProjectile(String modprojectile, String orgprojectile,String[] projectiles,String[] keys,String folder) {
 		Element orgprojectileentity = null,	modprojectileentity = null;
 		String	orgprojectilepath	= null,	modprojectilepath	= null;
 		
@@ -819,7 +923,7 @@ public class Config {
 				element = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(projectile))).getDocumentElement();
 			} catch (SAXException | IOException | ParserConfigurationException e) {
 				e.printStackTrace();
-				return null;
+				return;
 			}
 			
 			if(orgprojectile.equalsIgnoreCase(element.getAttribute("name"))) {
@@ -836,7 +940,7 @@ public class Config {
 			}
 		}
 		if(orgprojectileentity == null || modprojectileentity == null) {
-			return null;
+			return;
 		}
 		
 		
@@ -849,16 +953,29 @@ public class Config {
 		modprojectileentity.setAttribute("model",fixPath(getAttribute(orgprojectileentity.getAttribute("model"),""),orgprojectilepath));
 		modprojectileentity.setAttribute("impacteffect",fixPath(getAttribute(orgprojectileentity.getAttribute("impacteffect"),""),orgprojectilepath));
 		modprojectileentity.setAttribute("traileffect",fixPath(getAttribute(orgprojectileentity.getAttribute("traileffect"),""),orgprojectilepath));
+
+		//Onimpact etc... private void On(Element[] element,String[] filepath,String[] keys,String folder) {
+		Element[] one = {orgprojectileentity,orgprojectileentity,modprojectileentity};
+		String[] onpath = {orgprojectilepath,modprojectilepath};
+		On(one,onpath,keys,folder);
 		
-		String[] re = {modprojectilepath,xmlToString(modprojectileentity)};
-		return re;
+		try {
+			if(!new LLFile(folder+modprojectilepath,false).exists()) {
+			
+				LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+modprojectilepath)));
+				out.writeString(stamp(xmlToString(modprojectileentity)));
+				out.close();
+			}
+		} catch (IOException e) {
+			main.log.print(e,"Failed to write to "+modprojectilepath,true);
+		}
 	}
-	public Element getModifier(String key,Element entity,String tag) {
+	public Element getModifier(String key,Element entity) {
 		if(entity.getAttribute("key").equalsIgnoreCase(key)) {
 			return entity;
 		}
 		
-		NodeList list = entity.getElementsByTagName(tag);
+		NodeList list = entity.getElementsByTagName("modifier");
 		for(int i = 0;i <= list.getLength()-1;i++) {
 			Element element = (Element) list.item(i);
 			
@@ -868,8 +985,18 @@ public class Config {
 		}
 		return null;
 	}
-	public Element getModifier(String key,Element entity) {
-		return getModifier(key,entity,"modifier");
+	public Element getTag(String tag,Element entity,Element backup) {
+		if(entity != null) {
+			NodeList list = entity.getChildNodes();
+			
+			for(int i = 0;i <= list.getLength()-1;i++) {
+				if(list.item(i).getNodeType() == Node.ELEMENT_NODE && list.item(i).getNodeName().equalsIgnoreCase(tag)) {
+					return (Element) list.item(i);
+				}
+			}
+		}
+		
+		return backup;
 	}
 	private String fixPath(String fix,String location) {
 		if(!fix.startsWith("/") && !fix.isEmpty()) {
@@ -960,6 +1087,7 @@ public class Config {
 		
 		//Making the dir's correct
 		s[1] = s[1].replaceAll("sample=\"","sample=\""+dir0).replaceAll("material=\"","material=\""+dir0).replaceAll("model=\"","model=\""+dir0).replaceAll("icon=\"","icon=\""+dir0).replaceAll("portrait=\"","portrait=\""+dir0).replaceAll("effect=\"","effect=\""+dir0).replaceAll("PlaySoundLinear ","PlaySoundLinear "+dir0).replaceAll("StartEffect ","StartEffect "+dir0).replaceAll("file=\"","file=\""+dir0).replaceAll("low=\"","low=\""+dir0).replaceAll("med=\"","med=\""+dir0).replaceAll("high=\"","high=\""+dir0).replaceAll("clip=\"","clip=\""+dir0).replaceAll(/*If model bug accurs this might be the error: before bug this == dir0+"\""+dir0+"\"","\"\"")*/"\""+dir0+"\"","\"\"").replaceAll(dir0+"/heroes","/heroes").replaceAll(dir0+"/shared","/shared").replaceAll(dir0+"/ui","/ui").replaceAll(dir0+"../../../",dir3).replaceAll(dir0+"../../",dir2).replaceAll(dir0+"../",dir1);
+		//System.out.println(s[1]);
 		for(int i = 0;i <= 1;i++) {
 			int length = s[i].split("<anim").length-2;
 			int position = 0;
@@ -987,6 +1115,117 @@ public class Config {
 		
 		
 		return s[0].replaceAll("file=\"","file=\""+dir0).replaceAll("low=\"","low=\""+dir0).replaceAll("med=\"","med=\""+dir0).replaceAll("high=\"","high=\""+dir0);
+	}
+	private String stamp(String str) {
+		return str+"\n<!-- Customization of Newerth -->";
+	}
+	private void On(Element[] element,String[] filepath,String[] keys,String folder) {
+		int mal = 0;
+		int org = 1;
+		int mod = 2;
+		
+		//Onimpact etc...  THIS WILL BE TRASH CODE!
+		NodeList list = element[mal].getChildNodes();
+		for(int n = 0;n <= list.getLength()-1;n++) {
+			if(list.item(n).getNodeType() == Node.ELEMENT_NODE) {
+				Element mall = (Element) list.item(n);
+				
+				if(mall.getNodeName().equalsIgnoreCase("modifier")) {
+					//Possibly do something;
+				}
+				else {
+					Element orgabilityon = getTag(mall.getTagName(),element[org],mall);
+					Element modabilityon = getTag(mall.getTagName(),element[mod],mall);
+					
+					Vector<Element> orgelements = runOn(orgabilityon,keys[0]);
+					Vector<Element> modelements = runOn(modabilityon,keys[1]);
+					
+					String asd = orgelements.size()+":"+modelements.size();
+					for(int nn = 0;nn <= orgelements.size()-1 && nn <= modelements.size()-1;nn++) {
+						
+						if(!orgelements.get(nn).getTagName().equalsIgnoreCase(modelements.get(nn).getTagName())) {
+							int max = Math.max(orgelements.size(),modelements.size());
+							
+							if(max == orgelements.size()) {
+								orgelements.remove(nn);
+							}
+							else {
+								modelements.remove(nn);
+							}
+							nn--;
+						}
+					}
+					
+					if(orgelements.size() == 0 || modelements.size() == 0) {
+						orgelements.clear();
+						modelements.clear();
+					}
+					else if(orgelements.size() != modelements.size()) {
+						for(int nn = Math.min(orgelements.size(),modelements.size());nn <= Math.max(orgelements.size(),modelements.size())-1;) {
+							if(nn == orgelements.size()) {
+								modelements.remove(nn);
+							}
+							else {
+								orgelements.remove(nn);
+							}
+						}
+					}
+					//System.out.println((iii+1)+":"+n+" = "+orgelements.size()+":"+modelements.size()+"("+asd+")");
+
+					for(int nn = 0;nn <= orgelements.size()-1;nn++) {
+						if(orgelements.get(nn).getTagName().equalsIgnoreCase("playeffect")) {
+							String orgeffect = fixPath(orgelements.get(nn).getAttribute("effect"),filepath[0]);
+							String modeffect = fixPath(modelements.get(nn).getAttribute("effect"),filepath[1]);
+							
+							try {
+								LLFile file = new LLFile(folder+modeffect.substring(1));
+								if(!(file.length() > 0)) {
+									StringBuilder sb = new StringBuilder();
+									ZipEntry zipentry = resources.getEntry(orgeffect.substring(1));
+									
+									if(zipentry == null) {
+										main.log.print("Failed to find the specific resource "+orgeffect);
+										continue;
+									}
+									
+									LLInputStream in2 = new LLInputStream(resources.getInputStream(zipentry)); //Same case as for 3 lines above;
+									while(in2.available() > 0) {
+										sb.append(in2.readString(4*4*1024));
+									}
+									String effect = sb.toString();
+									
+									//Fixing the paths...
+									String path = orgeffect.replaceFirst("/\\w+\\.{1}effect","/");
+									
+									effect = effect.replace("sample=\"","sample=\""+path);
+									effect = effect.replace("material=\"","material=\""+path);
+									effect = effect.replace("model=\"","model=\""+path);
+									
+									effect = effect.replaceAll(path+"/","/");
+									while(effect.contains("/../")) {
+										effect = effect.replaceFirst("/\\w+/\\.{2}/","/");
+									}
+									
+									//And now finally, time to output!
+									LLOutputStream ut = new LLOutputStream(new FileOutputStream(file));
+									ut.writeString(stamp(effect));
+									ut.close();
+								}
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+					
+					
+					
+					
+				}
+				
+				
+			}
+		}
 	}
 	
 	//Implements;

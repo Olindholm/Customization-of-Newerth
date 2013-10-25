@@ -10,7 +10,8 @@ public class Hero implements Comparable<Hero> {
 	String name;
 	String folder;
 	String entry;
-	public	Vector<Avatar>	avatars	= new Vector<Avatar>();
+	public	Vector<Avatar>	avatars		= new Vector<Avatar>();
+	public	Vector<Avatar>	ultimate	= new Vector<Avatar>();
 	
 	//Constructor;
 	public Hero(String srcname,String entry,String name) {
@@ -39,10 +40,19 @@ public class Hero implements Comparable<Hero> {
 	public int getAvatarCount() {
 		return avatars.size();
 	}
+	public Avatar getUltimate(int index) {
+		return ultimate.get(index);
+	}
+	public int getUltimateCount() {
+		return ultimate.size();
+	}
 	
 	//Add;
 	public void addAvatar(Avatar avatar) {
 		avatars.add(avatar);
+	}
+	public void addUltimate(Avatar avatar) {
+		ultimate.add(avatar);
 	}
 
 	@Override
@@ -53,6 +63,9 @@ public class Hero implements Comparable<Hero> {
 	//Remove;
 	public void removeAvatar(int index) {
 		avatars.remove(index);
+	}
+	public void removeUltimate(int index) {
+		ultimate.remove(index);
 	}
 	
 	//Do;
