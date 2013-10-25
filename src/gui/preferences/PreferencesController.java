@@ -4,7 +4,6 @@ import java.io.File;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -88,7 +87,6 @@ public class PreferencesController implements Controller {
 		
 		//PreferencesView(Window)
 		view.setTitle(TITLE);
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/res/icon.png")));
 		view.setResizable(false);
 	}
 

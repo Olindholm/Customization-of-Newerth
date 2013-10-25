@@ -68,7 +68,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		//Ctrl+N		= New
 		//Ctrl+O		= Open
 		//Ctrl+E		= Edit
-		//Ctrl+S	= Save As...
+		//Ctrl+S		= Save As...
 		
 		//F5			= Refresh
 		
@@ -104,7 +104,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		//Now to the action...
 		View view = new View("gui/project/ProjectView.fxml", new ProjectController(theModel));
 		view.initModality(Modality.WINDOW_MODAL);
-		view.initOwner(theView);
+		view.setOwner(theView);
 		if(view.showDialog()) {
 			createProject(theModel.getInt("projectScheme", Project.SCHEME_NONE));
 		}
@@ -154,7 +154,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		
 		View view = new View("gui/project/ProjectView.fxml", new ProjectController(theModel.project));
 		view.initModality(Modality.WINDOW_MODAL);
-		view.initOwner(theView);
+		view.setOwner(theView);
 		view.showAndWait();
 		
 		loadMap(heroList.getSelectionModel().getSelectedItem());
@@ -195,7 +195,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	public void handlePreferences() {
 		View view = new View("gui/preferences/PreferencesView.fxml", new PreferencesController(theModel));
 		view.initModality(Modality.WINDOW_MODAL);
-		view.initOwner(theView);
+		view.setOwner(theView);
 		view.showAndWait();
 	}
 	@Override
@@ -235,10 +235,6 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		
 		heroList.setItems(fol);
 		heroList.getSelectionModel().selectedItemProperty().addListener(this);
-		
-		for(int i = 0; i < 100; i++) {
-			heroList.getItems().add(new Hero());
-		}
 		
 		//Project
 		File projectFile = new File(theModel.getString("projectFile", ""));

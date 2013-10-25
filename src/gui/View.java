@@ -63,6 +63,12 @@ public class View extends Stage {
 	// Removers
 
 	// Others Methods
+	public void setOwner(Stage owner) {
+		super.getIcons().addAll(owner.getIcons());
+		
+		initOwner(owner);
+	}
+	
 	public void close(boolean dialog) {
 		this.dialog = dialog;
 		

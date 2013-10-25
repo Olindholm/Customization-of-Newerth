@@ -4,7 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import gui.*;
 
 public class ProjectController implements Controller, ChangeListener<Number> {
@@ -60,7 +59,6 @@ public class ProjectController implements Controller, ChangeListener<Number> {
 		
 		//PreferencesView(Window)
 		view.setTitle(TITLE);
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/res/icon.png")));
 		view.setResizable(false);
 	}
 	@Override

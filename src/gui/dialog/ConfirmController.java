@@ -2,7 +2,6 @@ package gui.dialog;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import gui.Controller;
 import gui.Model;
 import gui.View;
@@ -32,7 +31,6 @@ public class ConfirmController implements Controller {
 		messageLabel.setText(message);
 		
 		view.setTitle("Message");
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/res/icon.png")));
 		view.setResizable(false);
 	}
 

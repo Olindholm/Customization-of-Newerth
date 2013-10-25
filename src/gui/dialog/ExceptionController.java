@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import gui.Controller;
 import gui.Model;
@@ -50,7 +49,6 @@ public class ExceptionController implements Controller {
 		exceptionArea.setText(getPrintStackTraceAsString(t));
 		
 		view.setTitle("Message");
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/res/icon.png")));
 		view.setResizable(false);
 	}
 	
