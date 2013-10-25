@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class LLFile extends File {
 	//STATIC variables;
@@ -31,7 +32,12 @@ public class LLFile extends File {
 			if(new File(path).getParentFile() != null) {
 				new File(path).getParentFile().mkdirs();
 			}
-			createNewFile();
+			if(delete()) {
+				createNewFile();
+			}
+			else {
+				throw new IOException("");
+			}
 		}
 	}
 	//Set;
@@ -63,6 +69,36 @@ public class LLFile extends File {
 	//Remove;
 	
 	//Do;
+	public static File chooseFile(String title,String[] filters,File directory) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setDialogTitle(title);
+		chooser.setCurrentDirectory(directory);
+		
+		if(filters != null) {
+			for(int i = 0;i <= filters.length-1;i++) {
+				if(filters.equals("*")) {
+					chooser.setAcceptAllFileFilterUsed(true);
+				}
+				else {
+					chooser.addChoosableFileFilter(new FileNameExtensionFilter(filters[i],filters[i+1]));
+					i++;
+				}
+			}
+		}
+		else {
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+		
+		int option;
+		while((option = chooser.showOpenDialog(null)) == JFileChooser.APPROVE_OPTION) {
+	    	File f = chooser.getSelectedFile();
+	    	if(f.exists()) {
+	    		return f;
+		    }
+		}
+		return null;
+	}
 	
 	//Other;
 	public File[] getAllFiles() {
@@ -88,9 +124,6 @@ public class LLFile extends File {
 		
 		return files.toArray(new File[files.size()]);
 	}
-	/*private File[] getAllFiles(File file) {
-		File[] files = 
-	}*/
 	
 	//Implements;
 	

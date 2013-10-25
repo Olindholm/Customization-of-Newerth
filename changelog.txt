@@ -21,6 +21,9 @@ Table of content,
 				Bugs & Fixes
 			3.0.0.6
 				Bugs & Fixes
+			3.0.0.7
+				General
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -56,4 +59,16 @@ Table of content,
 	3.0.0.6
 		== Bugs & Fixes ==
 			- Fixed the a couple of paths
+	
+	3.0.0.7
+		== General ==
+			- Added ignore filter of ultimate heroes
+			- Added support for the ability->projectile attribute.
+			- Rewrote the refresh method to print errors more proffesionally
+			
+		== Bugs & Fixes ==
+			- Fixed more bugged paths
+			- Fixed Unapply modifications button
+			- Fixed Apply and launch button
+			- Fixed bugs causing crashes when not textures couldn't be found
 	

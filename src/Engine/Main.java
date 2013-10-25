@@ -2,14 +2,10 @@ package Engine;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import Doodads.LLFile;
 import Doodads.LLLogger;
-import Doodads.LLOutputStream;
 
 
 public class Main {
@@ -19,7 +15,7 @@ public class Main {
 	//STATIC variables;
 	public static final String NAME		= "Customization of Newerth";
 	public static final String BRANCH	= "The New Age";
-	public static final String VERSION	= "3.0.0.6";
+	public static final String VERSION	= "3.0.0.7";
 	public static final String PATH		= System.getenv("APPDATA")+File.separator+"Lindholm"+File.separator+NAME+File.separator;
 	
 	//Variables;
@@ -38,7 +34,7 @@ public class Main {
 		} catch (IOException e) {
 			log = new LLLogger("["+VERSION+"]");
 			log.print(NAME+" - "+BRANCH+" - "+VERSION);
-			log.print(e,"Failed to establish log to "+PATH+"console.log");
+			log.print(e,"Failed to establish log to "+PATH+"console.log",true);
 		}
 		
 		config = new Config(this);
@@ -51,7 +47,7 @@ public class Main {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				log.print(e,"Well I'll be damned!");
+				log.print(e,"Well I'll be damned!",false);
 			}
 		}
 		if(config.property.getProperty("Setting_Refresh",true)) {
@@ -73,7 +69,7 @@ public class Main {
 		try {
 			config.property.save("test");
 		} catch (IOException e) {
-			this.log.print(e,"Failed to output config to \""+Main.PATH+"config.ini"+"\"");
+			this.log.print(e,"Failed to output config to \""+Main.PATH+"config.ini"+"\"",true);
 		}
 		System.exit(0);
 	}

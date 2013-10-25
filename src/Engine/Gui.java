@@ -45,7 +45,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 	public	static	int		ACTION_CREDITS			= 7;
 	public	static	int		ACTION_ABOUT			= 8;
 	public	static	int		ACTION_APPLYNLAUNCH		= 9;
-	public	static	int		ACTION_UNAPPLY			= 9;
+	public	static	int		ACTION_UNAPPLY			= 10;
 	
 	//Variables;
 	private Main	main;
@@ -100,7 +100,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 		
 		menuitem = new JMenuItem("Unapply Modifications",KeyEvent.VK_U);
 		menuitem.addActionListener(this);
-		menuitem.setActionCommand(Gui.ACTION_APPLYNLAUNCH+"");
+		menuitem.setActionCommand(Gui.ACTION_UNAPPLY+"");
 		menu.add(menuitem);
 		
 		menu.addSeparator();
@@ -139,7 +139,17 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 					if(Desktop.isDesktopSupported()) {
 						Desktop explorer = Desktop.getDesktop();
 						try {
-							explorer.open(new LLFile(main.config.property.getProperty("game","")));
+							File file = new File(main.config.property.getProperty("Setting_Resources",LLFile.getProgram()[0]+"Heroes of Newerth"+File.separator+"game"+File.separator+"resources0.s2z"));
+							if(!file.exists()) {
+								String[] filters = {"Compressed S2Games file","s2z"};
+								file = LLFile.chooseFile("Open - Heroes of Newerth resources",filters,new File(LLFile.getProgram()[0]));
+								if(file == null) {
+									return;
+								}
+								main.config.property.setProperty("Setting_Resources",file.getAbsolutePath());
+							}
+							
+							explorer.open(file.getParentFile());
 						} catch (IOException e) {
 							//new LLException(e);
 						}
@@ -412,7 +422,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 		progressbar.setSize(new Dimension(250,15));
 		progressbar.setValue(100);
 		panel.add(progresslabel = new JLabel("Finished request in 0ms"),5+250+5,310+28+5);
-		progresslabel.setSize(new Dimension(250,15));
+		progresslabel.setSize(new Dimension(750,15));
 		progresslabel.setEnabled(false);
 		
 		//Finishing the frame;
@@ -458,7 +468,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 		progressbar.setValue(0);
 		
 		if(action == Gui.ACTION_APPLY) {
-			new Compile(main);
+			success = main.config.compile();
 			command = "Applying Modifcations";
 		}
 		else if(action == Gui.ACTION_UPDATE) {
@@ -480,15 +490,35 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 			command = "Refreshing";
 		}
 		else if(action == Gui.ACTION_APPLYNLAUNCH) {
-			new Compile(main);
+			success = main.config.compile();
 			
-			try {
-				Runtime.getRuntime().exec(main.config.property.getProperty("game","").replace("game\\","hon.exe"));
-				
-				main.exit();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			if(success) {
+				try {
+					Runtime.getRuntime().exec(new LLFile(main.config.property.getProperty("Setting_Resources",""),false).getParentFile().getParentFile().getAbsolutePath()+File.separator+"hon.exe");
+					
+					main.exit();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
+		}
+		else if(action == Gui.ACTION_UNAPPLY) {
+			command = "Unapplying modifcations";
+			try {
+				File file = new LLFile(new LLFile(main.config.property.getProperty("Setting_Resources",""),false).getParentFile().getAbsolutePath()+File.separator+"resourcesCoN.s2z",false);
+				success = file.delete();
+			} catch (IOException e) {
+				try {
+					main.log.print(e,"Failed to access to "+new LLFile(main.config.property.getProperty("Setting_Resources",""),false).getParentFile().getAbsolutePath()+File.separator+"resourcesCoN.s2z",true);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+			
+			if(!success) {
+				JOptionPane.showMessageDialog(null,"Failed to unapply modifications, make sure no proccess, for example hon.exe is running");
+			}
+			
 		}
 		else {
 			return;
