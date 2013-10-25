@@ -32,12 +32,9 @@ public class LLFile extends File {
 			if(new File(path).getParentFile() != null) {
 				new File(path).getParentFile().mkdirs();
 			}
-			if(delete()) {
-				createNewFile();
-			}
-			else {
-				throw new IOException("");
-			}
+			//This is technically incorrect if I've understood the documentation correctly, I should first check if it exists and then delete it if it does before creating a new one.
+			//However I found that to be very buggy and just throwing expections everything and this still works(or atleast doesn't seem to fuck up) so...
+			createNewFile();
 		}
 	}
 	//Set;

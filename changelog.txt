@@ -24,6 +24,8 @@ Table of content,
 			3.0.0.7
 				General
 				Bugs & Fixes
+			3.0.0.7
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -71,4 +73,8 @@ Table of content,
 			- Fixed Unapply modifications button
 			- Fixed Apply and launch button
 			- Fixed bugs causing crashes when not textures couldn't be found
+		
+	3.0.0.8
+		== Bugs & Fixes ==
+			- Fixed a bug that made CoN unable to zip it's archive if the file was not already existing(Mostly only noticable for people who never used it before)
 	

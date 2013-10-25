@@ -15,7 +15,7 @@ public class Main {
 	//STATIC variables;
 	public static final String NAME		= "Customization of Newerth";
 	public static final String BRANCH	= "The New Age";
-	public static final String VERSION	= "3.0.0.7";
+	public static final String VERSION	= "3.0.0.8";
 	public static final String PATH		= System.getenv("APPDATA")+File.separator+"Lindholm"+File.separator+NAME+File.separator;
 	
 	//Variables;
