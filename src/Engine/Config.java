@@ -167,8 +167,8 @@ public class Config {
 		
 		
 		gui.progressbar.setValue(0);
-		while(!new File(property.getProperty("game","")+"resources0.s2z").exists()) {
-			gui.progresslabel.setText("Locating resources... "+property.getProperty("game","")+"resources0.s2z");
+		while(!new File(property.getProperty("Setting_Resources",LLFile.getProgram()[0]+"Heroes of Newerth"+File.separator+"game"+File.separator+"resources0.s2z")).exists()) {
+			gui.progresslabel.setText("Locating resources... "+property.getProperty("Setting_Resources",""));
 			
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Open - Failed to locate resources");
@@ -192,7 +192,7 @@ public class Config {
 		try {
 			LLInputStream in;
 			StringBuilder data = new StringBuilder();
-			resources = new ZipFile(new File(property.getProperty("game","")+"resources0.s2z"));
+			resources = new ZipFile(new File(property.getProperty("Setting_Resources","")));
 			Enumeration en = resources.entries();
 			
 			//Fetching the entities name so it'll be ready to be read when needed;
@@ -350,7 +350,7 @@ public class Config {
 		
 		if(textures == null) {
 			try {
-				textures = new ZipFile(new File(property.getProperty("game","")+"textures.s2z"));
+				textures = new ZipFile(new File(property.getProperty("Setting_Textures",property.getProperty("Setting_Resources","").replaceFirst("\\"+File.separator+"\\w+\\.{1}s2z","\\"+File.separator+"textures.s2z"))));
 			} catch (ZipException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

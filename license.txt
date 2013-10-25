@@ -1,20 +1,71 @@
 
 ------------------------------------------------------------------------------
 
-THIS SOFTWARE IS UNDER THE FOLLOWING TERMS OF AGREEMENT.
+				THIS SOFTWARE IS UNDER THE FOLLOWING LICENSE.
 
 ------------------------------------------------------------------------------
 
-The code, work and engine that puts this software together is under copyright law.
-This inlcudes the code, work and engine only meaning any texture, image, icon etc is not.
+Table of content,
+	1. Copyright
+	2. Terms of Agreement
+		2.1 Denfinition
+		2.2 Content
+			2.2.1 Patch
+			2.2.2 Material
+		2.3 Warranty
+		2.4 Publish and sharing
+		2.5 Terms
+			2.5.1 Terms
+			2.5.2 Breaches
+			2.5.3 Contact
+			
+------------------------------------------------------------------------------
 
-Copyright (c) 2012, Wiggy boy <Lindholm>
-All rights reserved.
+1. Copyright
+	This software is published by Wiggy boy <Lindholm>(Legal name: Osvald Lindholm)(hereinafter "Lindholm").
+	
+	All code, engines, files and other resources to this software are under Copyright law.
+	This does NOT include any S2Games resources, meaning any textures, image, icon, xml, etcgathered from the S2 Games resources are not under our copyright law.
+	
+	Copyright (c) 2012, Lindholm.
+	All rights reserved.
 
 ------------------------------------------------------------------------------
 
-Terms of Agreement
-
-
+2. Terms of Agreement
+	2.1 Denfinition
+		This software is licensed for free use only.
+		By installing, Copying, or otherwise using this software anyhow you agree to be bound to the following terms of agreement.
+		
+		Customization of Newerth(hereinafter "CoN") is a compiled java program.
+		Use at your own risk, Lindholm or any other provider to this software is NOT responosible.
+		
+	2.2 Content
+		2.2.1 Patch
+			Any content added via download in the wish of an upgrade or patch will most likely contain copyrighted material.
+			The material should be treated with respect and not used to violate these terms or any other law or license they might be under.
+			
+		2.2.2 Material
+			The material of this software should not tried to be decoded, extracted or opened in any way than the ones provided by the software.
+			
+	2.3 Warranty
+		This software is provided to you as an "as is" product and Lindholm does not and will not warrant the software.
+		The software does not promise or say it'll be free from errors, viruses or other malicious software.
+	2.4 Publish and sharing
+		You do not have the right to share this software with "file-sharing".
+		If you desire to share this software you will have to provide your audience with a download provided by Lindholm.
+		
+		This also includes that you may not upload this software to any file-sharing or file-hosting site or service.
+	2.5 Terms
+		2.5.1 Terms
+			The holder or host of CoN(at the moment Lindholm) may add, change remove any terms at any given time.
+			
+			If presented in court of a case where something is defined but not given a value to the representetive of CoN, Lindholm may say a value to resolve the case.
+		2.5.2 Breaches
+			If any of these terms are not followed properly, aka a breach in the terms Lindholm have the right to end or limit the contract aswell as fine you for damages caused.
+		2.5.3 Contact
+			If you questions occur about the terms of agreement you are more than welcome to email Wiggy0boy@gmail.com and hopefully get an answer to your question.
+			
+	I herby acknowledge taht I have read and understood the foregoing terms of argeement and agree to follow and bound me with these terms and conditions of this use.
 
 ------------------------------------------------------------------------------

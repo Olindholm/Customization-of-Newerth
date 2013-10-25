@@ -85,7 +85,8 @@ public class Compile {
 				modheroentity = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(main.config.resources.getInputStream(main.config.resources.getEntry(hero.getEntry()))).getDocumentElement();
 				modheroentity.setAttribute("key",hero.getAvatar(0).getKey()); //Setting a key so later looks for modifers will be found;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
-				main.log.print(e,"");
+				main.log.print(e,"Failed to load or parse "+hero.getEntry());
+				continue heroes;
 			}
 
 			Vector<String> projectiles = new Vector<String>();
@@ -126,7 +127,7 @@ public class Compile {
 						}
 					}
 				} catch (IOException | SAXException | ParserConfigurationException e) {
-					main.log.print(e,"");
+					main.log.print(e,"Failed to load or parse "+abilities.get(ii));
 				}
 			}
 			
@@ -189,13 +190,12 @@ public class Compile {
 						out.close();
 						
 					} catch (IOException e) {
-						e.printStackTrace();
+						main.log.print(e,"Failed to write to "+modheromodifier.getAttribute("model"));
 					}
 					//Projectile;
 					if(!orgheroentity.getAttribute("attackprojectile").isEmpty()) {
+						String[] projectile = getProjectile(getAttribute(modheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),getAttribute(orgheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),projectiles.toArray(new String[projectiles.size()]));
 						try {
-							String[] projectile = getProjectile(getAttribute(modheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),getAttribute(orgheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),projectiles.toArray(new String[projectiles.size()]));
-							
 							if(!new LLFile(folder+projectile[0],false).exists()) {
 							
 								LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+projectile[0])));
@@ -203,7 +203,7 @@ public class Compile {
 								out.close();
 							}
 						} catch (IOException e) {
-							e.printStackTrace();
+							main.log.print(e,"Failed to write to "+projectile[0]);
 						}
 					}
 					//Abilities
@@ -236,20 +236,19 @@ public class Compile {
 				out.close();
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				main.log.print(e,"Failed to write to "+hero.getEntry());
 			}
-			try {
-
-				for(int ii = 0;ii <= ability.length-1;ii++) {
+			
+			for(int ii = 0;ii <= ability.length-1;ii++) {
+				try {
 					if(ability[ii] != null) {
 						LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+ability[ii])));
 						out.writeString(xmlToString(modabilityentity[ii]));
 						out.close();
 					}
+				} catch (IOException e) {
+					main.log.print(e,"Failed to write to "+ability[ii]);
 				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		//Zip...
@@ -258,7 +257,7 @@ public class Compile {
 			filefolder = new LLFile(folder,false);
 			if(filefolder.exists()) {
 				main.gui.progresslabel.setText("Zipping resources...");
-				ZipOutputStream zut = new ZipOutputStream(new FileOutputStream(new LLFile(main.config.property.getProperty("Setting_resourcesCoN",main.config.property.getProperty("Setting_resources","")),true)));
+				ZipOutputStream zut = new ZipOutputStream(new FileOutputStream(new LLFile(main.config.property.getProperty("Setting_ResourcesCoN",main.config.property.getProperty("Setting_Resources","").replaceFirst("\\"+File.separator+"\\w+\\.{1}s2z","\\"+File.separator+"resourcesCoN.s2z")),true)));
 				
 				File[] files = filefolder.getAllFiles();
 				for(File file : files) {
@@ -278,13 +277,27 @@ public class Compile {
 					}
 					zut.closeEntry();
 				}
+
+				LLInputStream zin = new LLInputStream(new FileInputStream(main.PATH+"console.log"));
+				String content = "";
+				
+				while(zin.available() > 0) {
+					content += zin.readString(4*4*1024);
+				}
+				zin.close();
+				
+				zut.putNextEntry(new ZipEntry("console.log"));
+				for(int i = 0;i <= content.length()-1;i++) {
+					zut.write((int) content.charAt(i));
+				}
+				zut.closeEntry();
 				zut.close();
 			}
 			else {
 				new LLFile(main.config.property.getProperty("game","")+"resourcesCoN.s2z",true).delete();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			main.log.print(e,"Failed to write to "+main.config.property.getProperty("Setting_ResourcesCoN",main.config.property.getProperty("Setting_Resources","").replaceFirst("/\\w+\\.{1}s2z","resourcesCoN.s2z")));
 		}
 				/*
 						

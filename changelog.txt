@@ -1,15 +1,59 @@
 
 ------------------------------------------------------------------------------
-
-Customization of Newerth changelog.
+								Changelog
+						Customization of Newerth
 
 ------------------------------------------------------------------------------
 
-
-3.0
+Table of content,
+	3.0 The New Age
+		General
+		Patches
+			3.0.0.1
+				General
+			3.0.0.2
+				General
+			3.0.0.3
+				General
+			3.0.0.4
+				General
+			3.0.0.5
+				Bugs & Fixes
+			3.0.0.6
+				Bugs & Fixes
+			
 ------------------------------------------------------------------------------
-== General ==
-- Test argument
 
-== Bug Fixes ==
-- Nothin really
+3.0 The New Age
+	== General ==
+		- Reworked all the code
+		- Merged classes from Lindholm Library so we won't need to import it anymore.
+	
+	== Patches ==
+	3.0.0.1
+		== General ==
+			- An exact copy of the original 3.0 just to debug and make sure the update work
+	
+	3.0.0.2
+		== General ==
+			- Added support for abilities
+	
+	3.0.0.3
+		== General ==
+			- Added a console log
+			- Reworked the update class
+	
+	3.0.0.4
+		== General ==
+			- Added ability effect support
+	
+	3.0.0.5
+		== Bugs & Fixes ==
+			- Reworked ability's to prevent "unread bits" bug
+			- Removed ability effects due to bugs
+			- Fixed a bug in the update which made it not restart after the update
+	
+	3.0.0.6
+		== Bugs & Fixes ==
+			- Fixed the a couple of paths
+	
