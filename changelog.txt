@@ -29,6 +29,9 @@ Table of content,
 			3.0.0.9
 				General
 				Bugs & Fixes
+			3.0.1.0
+				General
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -90,4 +93,11 @@ Table of content,
 		== Bugs & Fixes ==
 			- Fixed a bug which occured sometimes when trying to launch HoN but it wouldn't launch
 			- Fixed so that CoN won't add avatars who are broken with a dublicated key
+	
+	3.0.0.9
+		== General ==
+			- Update the Exception Gui.
+		
+		== Bugs & Fixes ==
+			- Fixed a bug which made unable to select Draconis
 	

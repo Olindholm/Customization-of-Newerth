@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import Interface.LLGui;
+
 public class LLLogger {
 	private LLOutputStream ut = null;
 	private String prefix;
@@ -52,7 +54,11 @@ public class LLLogger {
 		
 		System.out.println(print);
 		if(messageuser) {
-			JOptionPane.showMessageDialog(null,message);
+			int aa = LLGui.show("Exception",message,print,new String[] {"Continue","Exit"});
+			
+			if(aa == 1) {
+				System.exit(0);
+			}
 		}
 	}
 }

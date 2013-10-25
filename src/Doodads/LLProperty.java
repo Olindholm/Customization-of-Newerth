@@ -10,6 +10,11 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.Vector;
 
+import Doodads.LLAccessories;
+import Doodads.LLFile;
+import Doodads.LLInputStream;
+import Doodads.LLOutputStream;
+
 public class LLProperty {
 	//STATIC variables;
 	

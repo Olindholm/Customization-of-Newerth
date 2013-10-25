@@ -50,10 +50,10 @@ import Doodads.LLAccessories;
 import Doodads.LLFile;
 import Doodads.LLInputStream;
 import Doodads.LLOutputStream;
-import Doodads.LLProperty;
 import Engine.Attributes.Avatar;
 import Engine.Attributes.Hero;
 import Interface.LLGui;
+import Doodads.LLProperty;
 
 public class Config {
 	//STATIC variables;
@@ -93,7 +93,7 @@ public class Config {
 				}
 				in.close();
 
-				if(LLGui.show("License Agreement","Please read the following license agreement carefully",data.toString(),new String[] {"I Agree and accept","I Disagree"}) != 0) {
+				if(LLGui.show("License Agreement","Please read the following license agreement carefully",data.toString(),new String[] {"I Agree","I Disagree"}) != 0) {
 					System.exit(0);
 				}
 				
@@ -122,20 +122,25 @@ public class Config {
 	public ImageIcon getImage(String path) {
 		if(textures != null) {
 			try {
-				InputStream in = textures.getInputStream(textures.getEntry(path));
 				
-				ByteBuffer b = ByteBuffer.allocate(in.available());
-				//System.out.println(in.available());
-				while(in.available() > 0) {
-					b.put((byte) in.read());
+				ZipEntry ze = textures.getEntry(path);
+				//System.out.println(path);
+				
+				if(ze != null) {
+					InputStream in = textures.getInputStream(ze);
 					
+					ByteBuffer b = ByteBuffer.allocate(in.available());
+					//System.out.println(in.available());
+					while(in.available() > 0) {
+						b.put((byte) in.read());
+						
+					}
+					BufferedImage img = DDS.readDxt(b);
+					
+					img = flipImage(img);
+					
+					return new ImageIcon(img.getScaledInstance(32,32,java.awt.Image.SCALE_SMOOTH));
 				}
-				BufferedImage img = DDS.readDxt(b);
-				
-				img = flipImage(img);
-				
-				return new ImageIcon(img.getScaledInstance(32,32,java.awt.Image.SCALE_SMOOTH));
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -743,7 +748,7 @@ public class Config {
 						Element[] one = {orgabilityentity[iii],orgabilitymodifier,modabilitymodifier};
 						String[] onpath = {ability[iii],ability[iii]};
 						String[] onkey = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
-						On(one,onpath,onkey,folder);
+						On(one,onpath,onkey,folder,projectiles.toArray(new String[projectiles.size()]));
 						
 					}
 				}
@@ -957,7 +962,7 @@ public class Config {
 		//Onimpact etc... private void On(Element[] element,String[] filepath,String[] keys,String folder) {
 		Element[] one = {orgprojectileentity,orgprojectileentity,modprojectileentity};
 		String[] onpath = {orgprojectilepath,modprojectilepath};
-		On(one,onpath,keys,folder);
+		On(one,onpath,keys,folder,projectiles);
 		
 		try {
 			if(!new LLFile(folder+modprojectilepath,false).exists()) {
@@ -1119,7 +1124,7 @@ public class Config {
 	private String stamp(String str) {
 		return str+"\n<!-- Customization of Newerth -->";
 	}
-	private void On(Element[] element,String[] filepath,String[] keys,String folder) {
+	private void On(Element[] element,String[] filepath,String[] keys,String folder,String[] projectiles) {
 		int mal = 0;
 		int org = 1;
 		int mod = 2;
@@ -1216,6 +1221,14 @@ public class Config {
 								e.printStackTrace();
 							}
 						}
+					/*	else if(orgelements.get(nn).getTagName().equalsIgnoreCase("spawnprojectile")) {
+							
+							if(!modelements.get(nn).getAttribute("name").equalsIgnoreCase(element[mal].getAttribute("name"))
+							&& !orgelements.get(nn).getAttribute("name").equalsIgnoreCase(element[mal].getAttribute("name"))) {
+								
+								getProjectile(modelements.get(nn).getAttribute("name"),orgelements.get(nn).getAttribute("name"),projectiles,keys,folder);
+							}
+						}*/
 					}
 					
 					
