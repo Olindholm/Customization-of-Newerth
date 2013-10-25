@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mouseTransparent="false" prefHeight="-1.0" prefWidth="500.0" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <HBox id="derp" alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="General" HBox.hgrow="ALWAYS" />
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+      <padding>
+        <Insets left="5.0" right="5.0" top="5.0" fx:id="x1" />
+      </padding>
+    </HBox>
+    <GridPane hgap="5.0" vgap="5.0">
+      <children>
+        <Label text="Language:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <HBox id="derp" alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+          <children>
+            <ComboBox id="langauge" fx:id="language" disable="true" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="English" HBox.hgrow="ALWAYS">
+              <items>
+                <FXCollections fx:factory="observableArrayList">
+                  <String fx:value="Item 1" />
+                  <String fx:value="Item 2" />
+                  <String fx:value="Item 3" />
+                </FXCollections>
+              </items>
+            </ComboBox>
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+          </padding>
+        </HBox>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mouseTransparent="false" prefHeight="-1.0" prefWidth="500.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <children>
+            <CheckBox fx:id="autoUpdate" mnemonicParsing="false" text="Automatically Check for Updates on Start" />
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+          </padding>
+        </VBox>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="NEVER" minWidth="10.0" percentWidth="-1.0" prefWidth="-1.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+      </columnConstraints>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+      </padding>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="-1.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <HBox id="derp" alignment="CENTER_LEFT" padding="$x1" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="Resources" HBox.hgrow="ALWAYS" />
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <GridPane hgap="5.0" vgap="5.0">
+      <children>
+        <Label text="Resource File:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <HBox id="derp" alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+          <children>
+            <TextField id="" fx:id="resourceFile" editable="true" prefWidth="200.0" promptText="" text="" HBox.hgrow="ALWAYS" />
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+          </padding>
+        </HBox>
+        <Button id="handleBrowse" disable="false" mnemonicParsing="false" onAction="#handleBrowse" text="Browse" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+        <Label text="Threading:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mouseTransparent="false" prefHeight="-1.0" prefWidth="500.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+          <children>
+            <Slider fx:id="threading" blockIncrement="1.0" disable="false" focusTraversable="true" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="0" orientation="HORIZONTAL" showTickLabels="true" showTickMarks="false" snapToTicks="true" visible="true" />
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+          </padding>
+        </VBox>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mouseTransparent="false" prefHeight="-1.0" prefWidth="500.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+          <children>
+            <CheckBox fx:id="autoRefresh" mnemonicParsing="false" text="Automatically Refresh Resources on Start" />
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+          </padding>
+        </VBox>
+      </children>
+      <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="-1.0" prefWidth="-1.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
+      </columnConstraints>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+      </padding>
+      <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+    </GridPane>
+    <HBox id="derp" alignment="CENTER_LEFT" padding="$x1" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox id="derp" fx:id="addTest" alignment="CENTER_RIGHT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Button mnemonicParsing="false" onAction="#handleOK" text="OK" />
+        <Button mnemonicParsing="false" onAction="#handleClose" text="Cancel" />
+        <Button mnemonicParsing="false" onAction="#handleApply" text="Apply" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+      </padding>
+    </HBox>
+  </children>
+  <padding>
+    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x2" />
+  </padding>
+</VBox>

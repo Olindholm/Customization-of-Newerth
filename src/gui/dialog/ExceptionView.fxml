@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="rootPanel" alignment="TOP_LEFT" maxHeight="700.0" maxWidth="500.0" minHeight="250.0" minWidth="250.0" mouseTransparent="false" prefHeight="450.0" prefWidth="500.0" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <HBox id="derp" alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="Message" HBox.hgrow="ALWAYS" />
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+      <padding>
+        <Insets left="5.0" right="5.0" top="5.0" fx:id="x1" />
+      </padding>
+    </HBox>
+    <HBox id="derp" alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Label fx:id="messageLabel" text="This is a message view" HBox.hgrow="ALWAYS">
+          <HBox.margin>
+            <Insets left="25.0" right="25.0" />
+          </HBox.margin>
+        </Label>
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </HBox>
+    <HBox id="derp" alignment="CENTER_LEFT" padding="$x1" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="Details" HBox.hgrow="ALWAYS" />
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox id="derp" alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" VBox.vgrow="ALWAYS">
+      <children>
+        <TextArea id="exceptionTextArea" fx:id="exceptionArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-font: 12px &quot;Courier New&quot;;&#10;-fx-text-fill: red;&#10;" text="&#10;" wrapText="false" HBox.hgrow="ALWAYS" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </HBox>
+    <HBox id="derp" alignment="CENTER_LEFT" padding="$x1" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox id="derp" alignment="CENTER_RIGHT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <HBox id="derp" alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" HBox.hgrow="ALWAYS">
+          <children>
+            <Button cancelButton="false" defaultButton="false" disable="true" mnemonicParsing="false" onAction="#handleReport" prefWidth="100.0" text="Send Report" />
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+          </padding>
+        </HBox>
+        <Button mnemonicParsing="false" onAction="#handleClose" prefWidth="100.0" text="Continue" />
+        <Button mnemonicParsing="false" onAction="#handleExit" prefWidth="100.0" text="Exit" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </HBox>
+  </children>
+  <padding>
+    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+  </padding>
+</VBox>

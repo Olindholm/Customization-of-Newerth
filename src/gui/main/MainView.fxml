@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox id="Root" fx:id="rootPanel" minHeight="400.0" minWidth="800.0" onKeyPressed="#handleHotkey" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <MenuBar maxHeight="-Infinity" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleApply" text="Apply" />
+            <MenuItem mnemonicParsing="false" onAction="#handleApplyNLaunch" text="Apply &amp; Launch" />
+            <MenuItem mnemonicParsing="false" onAction="#handleUnapply" text="Unapply" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleClose" text="Close" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Project">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleNew" text="New..." />
+            <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="Open..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleEdit" text="Edit..." />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="View">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleViewGameFolder" text="View Game Folder" />
+            <MenuItem mnemonicParsing="false" onAction="#handleRefreshResources" text="Refresh Resources" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Settings">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handlePreferences" text="Preferences" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Help Instructions" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" text="Changelog" />
+            <MenuItem mnemonicParsing="false" text="Credits" />
+            <MenuItem mnemonicParsing="false" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <tabs>
+        <Tab text="Heroes">
+          <content>
+            <AnchorPane>
+              <children>
+                <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" padding="$x1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                    <VBox id="VBox" alignment="CENTER" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                      <children>
+                        <TextField fx:id="heroFilter" onKeyReleased="#handleHeroFilter" prefWidth="200.0" />
+                        <ListView id="herolist" fx:id="heroList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                      </children>
+                    </VBox>
+                    <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                      <tabs>
+                        <Tab text="Avatars">
+                          <content>
+                            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                              <children>
+                                <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="428.0" prefWidth="564.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                  <children>
+                                    <ScrollPane id="ScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="418.0" prefViewportWidth="384.0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+                                      <content>
+                                        <VBox fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="250.0" spacing="5.0">
+                                          <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+                                          </padding>
+                                        </VBox>
+                                      </content>
+                                    </ScrollPane>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                      <children>
+                                        <CheckBox fx:id="forceAllAvatars" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Force All Avatars to..." />
+                                        <ComboBox maxHeight="32.0" maxWidth="1.7976931348623157E308" minHeight="32.0">
+                                          <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                              <String fx:value="Item 1" />
+                                              <String fx:value="Item 2" />
+                                              <String fx:value="Item 3" />
+                                            </FXCollections>
+                                          </items>
+                                          <VBox.margin>
+                                            <Insets fx:id="x2" />
+                                          </VBox.margin>
+                                        </ComboBox>
+                                      </children>
+                                      <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+                                      </padding>
+                                    </VBox>
+                                  </children>
+                                  <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                                  </columnConstraints>
+                                  <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+                                  </padding>
+                                  <rowConstraints>
+                                    <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
+                                  </rowConstraints>
+                                </GridPane>
+                              </children>
+                            </AnchorPane>
+                          </content>
+                        </Tab>
+                        <Tab disable="true" text="Indicators">
+                          <content>
+                            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
+                      </tabs>
+                    </TabPane>
+                  </children>
+                  <columnConstraints>
+                    <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" percentWidth="20.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                </GridPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab disable="true" text="Announcers" />
+        <Tab disable="true" text="Taunts" />
+      </tabs>
+      <VBox.margin>
+        <Insets fx:id="x2" />
+      </VBox.margin>
+    </TabPane>
+  </children>
+</VBox>
