@@ -3,6 +3,13 @@ package Engine;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import Doodads.LLFile;
+import Doodads.LLLogger;
+import Doodads.LLOutputStream;
 
 
 public class Main {
@@ -12,18 +19,27 @@ public class Main {
 	//STATIC variables;
 	public static final String NAME		= "Customization of Newerth";
 	public static final String BRANCH	= "The New Age";
-	public static final String VERSION	= "3.0.0.1";
+	public static final String VERSION	= "3.0.0.4";
 	public static final String PATH		= System.getenv("APPDATA")+File.separator+"Lindholm"+File.separator+NAME+File.separator;
 	
 	//Variables;
-	public	Config	config;
-	public	Gui		gui;
+	public	LLLogger	log;
+	public	Config		config;
+	public	Gui			gui;
 	
 	//Setup;
 	
 	//Constructor;
 	public Main() {
-		this.println(NAME+" - "+BRANCH+" - "+VERSION);
+		try {
+			log = new LLLogger("["+VERSION+"]",new File(PATH+"console.log"));
+			log.print(NAME+" - "+BRANCH+" - "+VERSION);
+			log.print("Successfully establish log to "+PATH+"console.log");
+		} catch (IOException e) {
+			log = new LLLogger("["+VERSION+"]");
+			log.print(NAME+" - "+BRANCH+" - "+VERSION);
+			log.print(e,"Failed to establish log to "+PATH+"console.log");
+		}
 		
 		config = new Config(this);
 		gui = new Gui(this);
@@ -35,7 +51,7 @@ public class Main {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log.print(e,"Well I'll be damned!");
 			}
 		}
 		if(config.property.getProperty("refresh",true)) {
@@ -53,16 +69,12 @@ public class Main {
 	//Do;
 	
 	//Other;
-	public void println(String s) {
-		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-		System.out.println("[Info]["+stackTraceElements[2].getClassName()+"]["+stackTraceElements[2].getLineNumber()+"]: "+s);
-	}
-	public void println(Exception e) {
-		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-		System.out.println("[Error]["+stackTraceElements[2].getClassName()+"]["+stackTraceElements[2].getLineNumber()+"]: "+e.toString());
-	}
 	public void exit() {
-		config.property.save("test");
+		try {
+			config.property.save("test");
+		} catch (IOException e) {
+			this.log.print(e,"Failed to output config to \""+Main.PATH+"config.ini"+"\"");
+		}
 		System.exit(0);
 	}
 	

@@ -45,6 +45,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 	public	static	int		ACTION_CREDITS			= 7;
 	public	static	int		ACTION_ABOUT			= 8;
 	public	static	int		ACTION_APPLYNLAUNCH		= 9;
+	public	static	int		ACTION_UNAPPLY			= 9;
 	
 	//Variables;
 	private Main	main;
@@ -98,14 +99,8 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 		menu.add(menuitem);
 		
 		menuitem = new JMenuItem("Unapply Modifications",KeyEvent.VK_U);
-		menuitem.addActionListener(
-			new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					new LLFile(main.config.property.getProperty("game")+"resourcesCoN.s2z").delete();
-				}
-			}
-		);
+		menuitem.addActionListener(this);
+		menuitem.setActionCommand(Gui.ACTION_APPLYNLAUNCH+"");
 		menu.add(menuitem);
 		
 		menu.addSeparator();
@@ -144,7 +139,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 					if(Desktop.isDesktopSupported()) {
 						Desktop explorer = Desktop.getDesktop();
 						try {
-							explorer.open(new LLFile(main.config.property.getProperty("game")));
+							explorer.open(new LLFile(main.config.property.getProperty("game","")));
 						} catch (IOException e) {
 							//new LLException(e);
 						}
@@ -476,7 +471,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 			new Compile(main);
 			
 			try {
-				Runtime.getRuntime().exec(main.config.property.getProperty("game").replace("game\\","hon.exe"));
+				Runtime.getRuntime().exec(main.config.property.getProperty("game","").replace("game\\","hon.exe"));
 				
 				main.exit();
 			} catch (IOException e1) {

@@ -15,28 +15,23 @@ public class LLFile extends File {
 	//Setup;
 	
 	//Constructor;
-	public LLFile(String path) {
+	public LLFile(String path) throws IOException {
 		super(path);
+		
 		if(!exists()) {
 			if(new File(path).getParentFile() != null) {
 				new File(path).getParentFile().mkdirs();
 			}
-			try {
-				createNewFile();
-			} catch (IOException e) {
-			}
+			createNewFile();
 		}
 	}
-	public LLFile(String path,boolean newfile) {
+	public LLFile(String path,boolean newfile) throws IOException {
 		super(path);
 		if(newfile) {
 			if(new File(path).getParentFile() != null) {
 				new File(path).getParentFile().mkdirs();
 			}
-			try {
-				createNewFile();
-			} catch (IOException e) {
-			}
+			createNewFile();
 		}
 	}
 	//Set;
@@ -55,7 +50,7 @@ public class LLFile extends File {
 		return System.getenv("PUBLIC")+File.separator;
 	}
 	public static String[] getProgram() {
-		if(new LLFile(System.getenv("ProgramFiles(x86)")+"",false).exists()) {
+		if((System.getProperty("os.arch").indexOf("64") != -1)) {
 			return new String[] {System.getenv("ProgramFiles(x86)")+File.separator,System.getenv("ProgramFiles")+File.separator};
 		}
 		else {
@@ -75,7 +70,13 @@ public class LLFile extends File {
 		String[] array = list();
 		
 		for(int i = 0;i <= array.length-1;i++) {
-			LLFile file = new LLFile(getAbsolutePath()+File.separator+array[i],false);
+			LLFile file = null;
+			try {
+				file = new LLFile(getAbsolutePath()+File.separator+array[i],false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			if(!file.isDirectory()) {
 				files.add(file);

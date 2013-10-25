@@ -65,4 +65,18 @@ public class LLAccessories {
 		
 		return fromindex+split[0].length();
 	}
+	public static String getString(String searchstring,String regex) {
+		return getString(searchstring,regex,0);
+	}
+	public static String getString(String searchstring,String regex,int fromindex) {
+		searchstring = searchstring.substring(fromindex);
+		
+		String[] split = searchstring.split(regex,2);
+		
+		if(split.length == 1) {
+			return null;
+		}
+		
+		return searchstring.substring(split[0].length(),searchstring.length()-split[1].length());
+	}
 }

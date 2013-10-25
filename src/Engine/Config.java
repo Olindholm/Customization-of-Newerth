@@ -49,8 +49,13 @@ public class Config {
 	public Config(Main main) {
 		this.main = main;
 		
-		main.println("Loading config from "+Main.PATH+"config.ini");
-		property = new LLProperty(new LLFile(Main.PATH+"config.ini"));
+		try {
+			property = new LLProperty(Main.PATH+"config.ini");
+			main.log.print("Successfully establish config from \""+Main.PATH+"config.ini"+"\"");
+		} catch (IOException e) {
+			main.log.print(e,"Failed to establish config from \""+Main.PATH+"config.ini"+"\"");
+			return;
+		}
 		
 		//Terms of Argement;
 	}
@@ -126,7 +131,12 @@ public class Config {
 			chooser.setDialogTitle("Open - Failed to locate resources");
 			chooser.setAcceptAllFileFilterUsed(false);
 			chooser.setFileFilter(new FileNameExtensionFilter("Compressed S2Games file","s2z"));
-			chooser.setCurrentDirectory(new LLFile(LLFile.getProgram()[0],false));
+			try {
+				chooser.setCurrentDirectory(new LLFile(LLFile.getProgram()[0],false));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			int option = chooser.showOpenDialog(null);
 		    if(option == JFileChooser.APPROVE_OPTION) {
 		    	property.setProperty("game",chooser.getSelectedFile().getParentFile().getAbsolutePath()+File.separator);

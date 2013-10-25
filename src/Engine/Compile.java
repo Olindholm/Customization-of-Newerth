@@ -194,7 +194,7 @@ public class Compile {
 								modp.setAttribute("modelscale",getAttribute(p.getAttribute("modelscale"),"1.0"));
 								
 								//Effects;
-								path = "/"+projectile.replaceFirst("/[0-9a-zA-Z-]+.entity","/");
+								path = "/"+projectile.replaceFirst("/\\w+\\.{1}entity","/");
 								while(path.contains("\\")) {
 									path.replace("\\","/");
 								}
@@ -253,7 +253,7 @@ public class Compile {
 						
 						//Extracting to see if required a modification;
 						for(int iii = 0;iii <= abilities.length-1;iii++) {
-							System.out.println(mode.getAttribute("key")+" to "+e.getAttribute("key")+" = "+abilities[iii]);
+							//System.out.println(mode.getAttribute("key")+" to "+e.getAttribute("key")+" = "+abilities[iii]);
 							Element ability = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(abilities[iii]))).getDocumentElement();
 							Element modability = figureFile(folder+abilities[iii]);
 							if(modability == null) {
@@ -275,7 +275,7 @@ public class Compile {
 							transformer.transform(new DOMSource(modability),new StreamResult(new LLFile(folder+abilities[iii])));
 							
 							//Path location for the file directory;
-							path = "/"+abilities[iii].replaceFirst("/[0-9a-zA-Z-]+.entity","/");
+							path = "/"+abilities[iii].replaceFirst("/\\w+\\.{1}entity","/");
 							while(path.contains("\\")) {
 								path.replace("\\","/");
 							}
@@ -302,7 +302,7 @@ public class Compile {
 														if(iiiiii <= modal2.getLength()-1) {
 															String ae = ((Element) al2.item(iiiiii)).getAttribute("effect");
 															String modae = ((Element) modal2.item(iiiiii)).getAttribute("effect");
-															System.out.println(modaelement.getTagName()+" -> "+mode.getAttribute("key")+" to "+e.getAttribute("key")+" = "+modae+" to "+ae);
+															//System.out.println(modaelement.getTagName()+" -> "+mode.getAttribute("key")+" to "+e.getAttribute("key")+" = "+modae+" to "+ae);
 															
 															//Will be have do done twice, for both ae and modae;
 															if(!ae.startsWith("/") && !ae.isEmpty()) {
@@ -339,12 +339,14 @@ public class Compile {
 																
 																//Need to fix all the paths now;
 																String effect = sb.toString();
-
-																effect = effect.replace("sample=\"","sample=\""+path);
-																effect = effect.replace("material=\"","material=\""+path);
-																effect = effect.replace("model=\"","model=\""+path);
 																
-																effect = effect.replaceAll(path+"/","/");
+																String path2 = ae.replaceFirst("/\\w+\\.{1}effect","/");
+
+																effect = effect.replace("sample=\"","sample=\""+path2);
+																effect = effect.replace("material=\"","material=\""+path2);
+																effect = effect.replace("model=\"","model=\""+path2);
+																
+																effect = effect.replaceAll(path2+"/","/");
 																while(effect.contains("/../")) {
 																	effect = effect.replaceFirst("/\\w+/\\.{2}/","/");
 																	System.out.println("stuck3");
@@ -354,6 +356,7 @@ public class Compile {
 																LLOutputStream ut = new LLOutputStream(new FileOutputStream(file));
 																ut.writeString(effect);
 																ut.close();
+																System.out.println(hero.getAvatar(ii).getKey());
 															}
 														}
 													}
@@ -377,7 +380,7 @@ public class Compile {
 			LLFile filefolder = new LLFile(folder,false);
 			if(filefolder.exists()) {
 				gui.progresslabel.setText("Zipping resources...");
-				ZipOutputStream zut = new ZipOutputStream(new FileOutputStream(new LLFile(main.config.property.getProperty("game")+"resourcesCoN.s2z",true)));
+				ZipOutputStream zut = new ZipOutputStream(new FileOutputStream(new LLFile(main.config.property.getProperty("game","")+"resourcesCoN.s2z",true)));
 				
 				File[] files = filefolder.getAllFiles();
 				for(File file : files) {
@@ -403,7 +406,7 @@ public class Compile {
 				zut.close();
 			}
 			else {
-				new LLFile(main.config.property.getProperty("game")+"resourcesCoN.s2z",true).delete();
+				new LLFile(main.config.property.getProperty("game","")+"resourcesCoN.s2z",true).delete();
 			}
 			
 		} catch (FileNotFoundException e) {
