@@ -1,0 +1,20 @@
+
+------------------------------------------------------------------------------
+
+THIS SOFTWARE IS UNDER THE FOLLOWING TERMS OF AGREEMENT.
+
+------------------------------------------------------------------------------
+
+The code, work and engine that puts this software together is under copyright law.
+This inlcudes the code, work and engine only meaning any texture, image, icon etc is not.
+
+Copyright (c) 2012, Wiggy boy <Lindholm>
+All rights reserved.
+
+------------------------------------------------------------------------------
+
+Terms of Agreement
+
+
+
+------------------------------------------------------------------------------

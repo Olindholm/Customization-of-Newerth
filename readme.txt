@@ -1,0 +1,1 @@
+This software is compiled with "JRE System Library[JavaSE-1.7]" and will therefore require Java JRE 7 or higher to run.
