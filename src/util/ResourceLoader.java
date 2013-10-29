@@ -24,14 +24,10 @@ public class ResourceLoader {
 
 	// STATIC Methods
 	public static String convertStreamToString(InputStream is) {
-		String reString = "";
-		
-		Scanner s = new Scanner(is, "UTF-8");
-		s.useDelimiter("\\A");
-		if(s.hasNext()) reString = s.next();
-		
-		s.close();
-		return reString;
+		try (Scanner s = new Scanner(is, "UTF-8")) {
+			s.useDelimiter("\\A");
+			return s.hasNext() ? s.next() : "";
+		}
 	}
 
 	// Variables
@@ -47,26 +43,23 @@ public class ResourceLoader {
 	}
 	
 	//Fetching...
-	private void fetchResources(ZipFile resources) throws IOException {
-		ZipEntry entry;
-		InputStream in;
+	private void fetchResources(ZipFile r) throws IOException {
 		
 		//NameTable
-		entry = resources.getEntry("stringtables/interface_en.str");
-		in = resources.getInputStream(entry);
-		nameTable = new NameTable(in);
+		try(InputStream is = r.getInputStream(r.getEntry("stringtables/interface_en.str"))) {
+			nameTable = new NameTable(is);
+		}
 		
 		//Content(Avatars mainly, possibly taunts, curiours etc in future)
-		entry = resources.getEntry("content/store_avatars.package");
-		in = resources.getInputStream(entry);
-		try {
-			fetchContent(in);
+		ZipEntry entry = r.getEntry("content/store_avatars.package");
+		try(InputStream is = r.getInputStream(entry)) {
+			fetchContent(is);
 		} catch (ParserConfigurationException | SAXException e) {
-			throw new RuntimeException("Could not load or parse " + resources.getName() + ", " + entry.toString(), e);
+			throw new RuntimeException("Could not load or parse " + r.getName() + ", " + entry.toString(), e);
 		}
 		
 		//Fetching entities
-		fetchEntities(resources);
+		fetchEntities(r);
 	}
 	private void fetchEntities(ZipFile resources) throws IOException {
 		Enumeration<? extends ZipEntry> entries = resources.entries();
