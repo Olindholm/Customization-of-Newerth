@@ -8,6 +8,7 @@ import gui.project.ProjectController;
 
 import java.awt.Desktop;
 import java.io.*;
+import java.util.zip.ZipFile;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.stage.*;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+import util.ResourceLoader;
 import util.ent.Hero;
 
 public class MainController implements Controller, ChangeListener<Hero> {
@@ -78,7 +80,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	}
 	@FXML
 	public void handleApply() {
-		System.out.println(theModel.project);
+		//TODO;
 	}
 	@FXML
 	public void handleApplyNLaunch() {
@@ -185,11 +187,16 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		Desktop explorer = Desktop.getDesktop();
 		File resourceFile = new File(theModel.getString("resourceFile", ""));
 		File gameFolder = resourceFile.getParentFile();
-		explorer.open(gameFolder);
+		
+		//explorer.open(gameFolder); removed due to sometimes trying to run files with similar names to the gameFolder.
+		explorer.browse(gameFolder.toURI());
 	}
 	@FXML
-	public void handleRefreshResources() {
-		//TODO
+	public void handleRefreshResources() throws IOException {
+		ResourceLoader loader = new ResourceLoader(new ZipFile(theModel.getString("resourceFile", "")));
+		loader.toString(); //Removes the Warning of the loader being useless, for the time being.
+		
+		
 	}
 	@FXML
 	public void handlePreferences() {

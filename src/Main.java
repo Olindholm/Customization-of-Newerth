@@ -49,6 +49,8 @@ public class Main extends Application {
 				View view = new View("gui/dialog/ExceptionView.fxml", new ExceptionController("Well, now this is embarrasing!", t));
 				view.initModality(Modality.APPLICATION_MODAL);
 				view.show();
+				
+				t.printStackTrace();
 			}
 			
 		});
