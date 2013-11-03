@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox alignment="TOP_LEFT" fillWidth="true" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" mouseTransparent="false" prefHeight="-1.0" prefWidth="-1.0" snapToPixel="true" spacing="5.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <HBox id="derp" alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="SOMETIMES" />
+        <Label text="Progress" HBox.hgrow="ALWAYS" />
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+      <padding>
+        <Insets left="5.0" right="5.0" top="5.0" fx:id="x1" />
+      </padding>
+    </HBox>
+    <VBox prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="15.0" prefWidth="400.0" progress="0.0" VBox.vgrow="ALWAYS" />
+        <Label fx:id="progressLabel" text="Initializing..." />
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </VBox>
+    <HBox id="derp" alignment="CENTER_LEFT" padding="$x1" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Separator maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+      </children>
+    </HBox>
+    <HBox id="" alignment="CENTER" mouseTransparent="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+      <children>
+        <Button cancelButton="false" disable="false" mnemonicParsing="false" onAction="#handleClose" opacity="1.0" prefWidth="100.0" text="Cancel" />
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </HBox>
+  </children>
+  <padding>
+    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+  </padding>
+</VBox>

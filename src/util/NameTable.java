@@ -2,6 +2,7 @@ package util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Scanner;
 
 public class NameTable {
 	// STATIC Variables
@@ -13,7 +14,7 @@ public class NameTable {
 
 	// Constructors
 	public NameTable(InputStream input) throws IOException {
-		stringtable = ResourceLoader.convertStreamToString(input);
+		stringtable = convertStreamToString(input);
 	}
 
 	// Setters
@@ -36,6 +37,13 @@ public class NameTable {
 		String[] split = s.split(regex,2);
 		
 		if(split.length == 1) return -1; return fromindex+split[0].length();
+	}
+	
+	private String convertStreamToString(InputStream is) {
+		try (Scanner s = new Scanner(is, "UTF-8")) {
+			s.useDelimiter("\\A");
+			return s.hasNext() ? s.next() : "";
+		}
 	}
 
 	// Implementation Methods

@@ -37,6 +37,7 @@ public class View extends Stage {
 			@Override
 			public void handle(WindowEvent we) {
 				controller.handleClose();
+				we.consume();
 			}
 			
 		});
@@ -57,6 +58,9 @@ public class View extends Stage {
 	// Setters
 
 	// Getters
+	public boolean isClosed() {
+		return !isShowing();
+	}
 
 	// Adders
 

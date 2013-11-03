@@ -3,6 +3,7 @@ package gui.main;
 import gui.*;
 import gui.util.*;
 import gui.preferences.PreferencesController;
+import gui.progress.ProgressController;
 import gui.project.Project;
 import gui.project.ProjectController;
 
@@ -10,6 +11,7 @@ import java.awt.Desktop;
 import java.io.*;
 import java.util.zip.ZipFile;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -19,7 +21,8 @@ import javafx.scene.control.*;
 import javafx.stage.*;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-import util.ResourceLoader;
+import util.ResourceExtractor;
+import util.ResourceTransformer;
 import util.ent.Hero;
 
 public class MainController implements Controller, ChangeListener<Hero> {
@@ -193,10 +196,44 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	}
 	@FXML
 	public void handleRefreshResources() throws IOException {
-		ResourceLoader loader = new ResourceLoader(new ZipFile(theModel.getString("resourceFile", "")));
-		loader.toString(); //Removes the Warning of the loader being useless, for the time being.
+		//Creating a progress gui;
+		final ProgressController progress = new ProgressController();
+		final View view = new View("gui/Progress/ProgressView.fxml", progress);
+		view.initModality(Modality.WINDOW_MODAL);
+		view.setOwner(theView);
+		view.show();
 		
+		//Flushing current resources
+		heroList.getItems().clear();
 		
+		//Collecting new resources...
+		ResourceExtractor extractor = new ResourceExtractor(new ZipFile(theModel.getString("resourceFile", "")));
+		final ResourceTransformer transformer = new ResourceTransformer(extractor);
+		progress.setMaxiumum(transformer.totalElements());
+		
+		int threads = theModel.getInt("threading", 3);
+		for(int i = 0;i < threads;i++) {
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					while(transformer.remainingElements() > 0 && !view.isClosed()) {
+						final Hero hero = transformer.nextElement();
+						
+						Platform.runLater(new Runnable() {
+							
+							@Override
+							public void run() {
+								heroList.getItems().add(hero);
+								progress.setValue(progress.getValue()+1, hero.toString() + "...");
+							}
+							
+						});
+					}
+				}
+				
+			}).start();
+		}
 	}
 	@FXML
 	public void handlePreferences() {
