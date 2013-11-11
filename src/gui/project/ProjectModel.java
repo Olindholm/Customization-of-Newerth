@@ -7,7 +7,6 @@ import java.io.InputStream;
 
 public class ProjectModel extends PropertiesModel {
 	// STATIC Variables
-	public static final int SCHEME_NONE = -1;
 
 	// STATIC Methods
 
@@ -15,7 +14,7 @@ public class ProjectModel extends PropertiesModel {
 
 	// Constructors
 	public ProjectModel() {
-		super("gui/project/defaults.project");
+		super("gui/project/defaults.properties");
 	}
 	public ProjectModel(InputStream in) throws IOException {
 		this();

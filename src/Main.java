@@ -5,7 +5,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import javax.swing.JOptionPane;
 
 import gui.View;
-import gui.dialog.ExceptionController;
+import gui.exception.ExceptionController;
 import gui.main.MainController;
 import gui.main.MainModel;
 
@@ -46,7 +46,7 @@ public class Main extends Application {
 
 			@Override
 			public void uncaughtException(Thread thread, Throwable t) {
-				View view = new View("gui/dialog/ExceptionView.fxml", new ExceptionController("Well, now this is embarrasing!", t));
+				View view = new View("gui/exception/ExceptionView.fxml", new ExceptionController("Well, now this is embarrasing!", t));
 				view.initModality(Modality.APPLICATION_MODAL);
 				view.show();
 				

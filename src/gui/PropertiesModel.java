@@ -16,6 +16,7 @@ public abstract class PropertiesModel extends Properties implements Model {
 	public PropertiesModel() {
 	}
 	public PropertiesModel(String defaultsPath) {
+		super(new Properties());
 		try {
 			super.defaults.load(ClassLoader.getSystemResourceAsStream(defaultsPath));
 		} catch (IOException e) {

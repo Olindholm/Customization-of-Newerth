@@ -11,6 +11,10 @@ import java.awt.Desktop;
 import java.io.*;
 import java.util.zip.ZipFile;
 
+import res.ResourceExtractor;
+import res.ResourceTransformer;
+import res.ent.Hero;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,9 +25,6 @@ import javafx.scene.control.*;
 import javafx.stage.*;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-import util.ResourceExtractor;
-import util.ResourceTransformer;
-import util.ent.Hero;
 
 public class MainController implements Controller, ChangeListener<Hero> {
 	// STATIC Variables
@@ -293,7 +294,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		
 		//MainView(Window)
 		view.setTitle(TITLE);
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/res/icon.png")));
+		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/main/icon.png")));
 		
 		view.setWidth(theModel.getInt("mainWidth"));
 		view.setHeight(theModel.getInt("mainHeight"));
