@@ -31,7 +31,7 @@ public class ProjectController implements Controller, ChangeListener<Number> {
 	@FXML
 	public void handleOK() {
 		//Saving preferences...
-		theModel.set("projectScheme", "" + ((int) scheme.getValue()));
+		theModel.setInt("scheme", (int) scheme.getValue());
 		
 		theView.close(true);
 	}
@@ -41,7 +41,7 @@ public class ProjectController implements Controller, ChangeListener<Number> {
 		this.theView = view;
 		
 		//Inserting the correct values into it's corresponding place...
-		scheme.setValue(theModel.getInt("projectScheme", Project.SCHEME_NONE));
+		scheme.setValue(theModel.getInt("scheme"));
 		changed(null, null, scheme.getValue());
 		
 		//Adding some listeners...

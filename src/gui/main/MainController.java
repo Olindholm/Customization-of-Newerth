@@ -4,7 +4,7 @@ import gui.*;
 import gui.util.*;
 import gui.preferences.PreferencesController;
 import gui.progress.ProgressController;
-import gui.project.Project;
+import gui.project.ProjectModel;
 import gui.project.ProjectController;
 
 import java.awt.Desktop;
@@ -98,7 +98,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	@FXML
 	public void handleNew() {
 		//Saving the current project...
-		File projectFile = new File(theModel.getString("projectFile", ""));
+		File projectFile = new File(theModel.getString("projectFile"));
 		if(projectFile.exists()) { //For autosave the file is required to exist.
 			saveProject(projectFile);
 		}
@@ -107,16 +107,18 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		}
 		
 		//Now to the action...
-		View view = new View("gui/project/ProjectView.fxml", new ProjectController(theModel));
+		ProjectModel model = new ProjectModel();
+		View view = new View("gui/project/ProjectView.fxml", new ProjectController(model));
 		view.initModality(Modality.WINDOW_MODAL);
 		view.setOwner(theView);
+		
 		if(view.showDialog()) {
-			createProject(theModel.getInt("projectScheme", Project.SCHEME_NONE));
+			setProject(model);
 		}
 	}
-	private void createProject(int scheme) {
-		theModel.project = new Project(scheme);
-		theModel.set("projectFile", "");
+	private void setProject(ProjectModel model) {
+		theModel.project = model;
+		theModel.setString("projectFile", "");
 		
 		//Load in the new proeprties...
 		loadMap(heroList.getSelectionModel().getSelectedItem());
@@ -124,7 +126,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	@FXML
 	public void handleOpen() {
 		//Saving the current project...
-		File projectFile = new File(theModel.getString("projectFile", ""));
+		File projectFile = new File(theModel.getString("projectFile"));
 		if(projectFile.exists()) { //For autosave the file is required to exist.
 			saveProject(projectFile);
 		}
@@ -143,8 +145,8 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	}
 	private void loadProject(File projectFile) {
 		try {
-			theModel.project = new Project(new FileInputStream(projectFile));
-			theModel.set("projectFile", projectFile.getPath());
+			theModel.project = new ProjectModel(new FileInputStream(projectFile));
+			theModel.setString("projectFile", projectFile.getPath());
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read or access " + projectFile.getPath(), e);
 		}
@@ -180,7 +182,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		
 		try {
 			theModel.project.store(new FileOutputStream(projectFile), null);
-			theModel.set("projectFile", projectFile.getPath());
+			theModel.setString("projectFile", projectFile.getPath());
 		} catch (IOException e) {
 			throw new RuntimeException("Could not write to or access " + projectFile.getPath(), e);
 		}
@@ -188,7 +190,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	@FXML
 	public void handleViewGameFolder() throws IOException {
 		Desktop explorer = Desktop.getDesktop();
-		File resourceFile = new File(theModel.getString("resourceFile", ""));
+		File resourceFile = new File(theModel.getString("resourceFile"));
 		File gameFolder = resourceFile.getParentFile();
 		
 		//explorer.open(gameFolder); removed due to sometimes trying to run files with similar names to the gameFolder.
@@ -207,11 +209,11 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		heroList.getItems().clear();
 		
 		//Collecting new resources...
-		ResourceExtractor extractor = new ResourceExtractor(new ZipFile(theModel.getString("resourceFile", "")));
+		ResourceExtractor extractor = new ResourceExtractor(new ZipFile(theModel.getString("resourceFile")));
 		final ResourceTransformer transformer = new ResourceTransformer(extractor);
 		progress.setMaxiumum(transformer.totalElements());
 		
-		int threads = theModel.getInt("threading", 3);
+		int threads = theModel.getInt("threading");
 		for(int i = 0;i < threads;i++) {
 			new Thread(new Runnable() {
 				
@@ -246,14 +248,14 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	@FXML
 	public void handleClose() {
 		//Saving properties for next run
-		theModel.set("mainWidth", "" + ((int) theView.getWidth()));
-		theModel.set("mainHeight", "" + ((int) theView.getHeight()));
+		theModel.setInt("mainWidth", (int) theView.getWidth());
+		theModel.setInt("mainHeight", (int) theView.getHeight());
 		
 		//Saving the Config
 		theModel.store(new File("config.properties"), null);
 		
 		//Saving the project...
-		File projectFile = new File(theModel.getString("projectFile", ""));
+		File projectFile = new File(theModel.getString("projectFile"));
 		if(projectFile.exists()) { //For autosave the file is required to exist.
 			saveProject(projectFile);
 		}
@@ -281,20 +283,20 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		heroList.getSelectionModel().selectedItemProperty().addListener(this);
 		
 		//Project
-		File projectFile = new File(theModel.getString("projectFile", ""));
+		File projectFile = new File(theModel.getString("projectFile"));
 		if(projectFile.exists()) {
 			loadProject(projectFile);
 		}
 		else {
-			createProject(Project.SCHEME_NONE);
+			setProject(new ProjectModel());
 		}
 		
 		//MainView(Window)
 		view.setTitle(TITLE);
 		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/res/icon.png")));
 		
-		view.setWidth(theModel.getInt("mainWidth", (int) rootPanel.getWidth()));
-		view.setHeight(theModel.getInt("mainHeight", (int) rootPanel.getHeight()));
+		view.setWidth(theModel.getInt("mainWidth"));
+		view.setHeight(theModel.getInt("mainHeight"));
 		
 		view.setMinWidth(rootPanel.getMinWidth());
 		view.setMinHeight(rootPanel.getMinHeight());

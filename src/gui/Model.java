@@ -10,12 +10,14 @@ public interface Model {
 	// Constructors
 
 	// Setters
-	public void set(String attribute, String value);
+	public void setString(String attribute, String value);
+	public void setInt(String attribute, int value);
+	public void setBoolean(String attribute, boolean value);
 
 	// Getters
-	public String getString(String property, String defaultValue);
-	public int getInt(String property, int defaultValue);
-	public boolean getBoolean(String property, boolean defaultValue);
+	public String getString(String property);
+	public int getInt(String property);
+	public boolean getBoolean(String property);
 
 	// Adders
 

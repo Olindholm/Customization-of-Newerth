@@ -32,6 +32,7 @@ public class ResourceTransformer {
 		return hero;
 	}
 	
+	@SuppressWarnings("unused")
 	private Avatar[] getAvatarsByHeroName(String heroName) {
 		Vector<Avatar> avatars = extractor.avatars;
 		Vector<Avatar> fittingAvatars = new Vector<Avatar>();

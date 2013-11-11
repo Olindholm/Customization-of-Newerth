@@ -52,11 +52,11 @@ public class PreferencesController implements Controller {
 	}
 	@FXML
 	public void handleApply() {
-		theModel.set("autoUpdate", "" + autoUpdate.isSelected());
+		theModel.setBoolean("autoUpdate", autoUpdate.isSelected());
 		
-		theModel.set("resourceFile", resourceFile.getText());
-		theModel.set("threading", "" + ((int) threading.getValue()));
-		theModel.set("autoRefresh", "" + autoRefresh.isSelected());
+		theModel.setString("resourceFile", resourceFile.getText());
+		theModel.setInt("threading", (int) threading.getValue());
+		theModel.setBoolean("autoRefresh", autoRefresh.isSelected());
 	}
 	@FXML
 	public void handleBrowse() {
@@ -79,11 +79,11 @@ public class PreferencesController implements Controller {
 		theView = view;
 		
 		//Inserting the correct values into it's corresponding place...
-		autoUpdate.setSelected(theModel.getBoolean("autoUpdate", true));
+		autoUpdate.setSelected(theModel.getBoolean("autoUpdate"));
 		
-		resourceFile.setText(theModel.getString("resourceFile", ""));
-		threading.setValue(theModel.getInt("threading", 3));
-		autoRefresh.setSelected(theModel.getBoolean("autoRefresh", true));
+		resourceFile.setText(theModel.getString("resourceFile"));
+		threading.setValue(theModel.getInt("threading"));
+		autoRefresh.setSelected(theModel.getBoolean("autoRefresh"));
 		
 		//PreferencesView(Window)
 		view.setTitle(TITLE);

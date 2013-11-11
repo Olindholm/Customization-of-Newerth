@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
  * caused difficulties with incombablity with Java 8 & Eclipse...
  * For details... http://stackoverflow.com/questions/19137261/java-duplicate-methods-named-xxx-issue-when-using-eclipse-compiler-in-idea-wi
  */
+@SuppressWarnings("rawtypes")
 public class FilterableObservableList<E> extends SimpleListProperty {
 	// STATIC Variables
 
@@ -20,6 +21,7 @@ public class FilterableObservableList<E> extends SimpleListProperty {
 	private String	filter = "";
 
 	// Constructors
+	@SuppressWarnings("unchecked")
 	public FilterableObservableList(ObservableList<E> observableList) {
 		super(observableList);
 	}
@@ -42,6 +44,7 @@ public class FilterableObservableList<E> extends SimpleListProperty {
 	}
 	
 	// Adders
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean add(Object e) {
 		String str = e.toString().toLowerCase();
@@ -60,6 +63,7 @@ public class FilterableObservableList<E> extends SimpleListProperty {
 	// Removers
 
 	// Others Methods
+	@SuppressWarnings("unchecked")
 	private void filterList() {
 			for(int i = 0; i < hidden.size(); i++) {
 			Object e = hidden.get(i);
@@ -74,6 +78,7 @@ public class FilterableObservableList<E> extends SimpleListProperty {
 			}
 		}
 	}
+	@SuppressWarnings("unchecked")
 	private void filterHidden() {
 		for(int i = 0; i < super.getSize(); i++) {
 			Object e = super.get(i);
