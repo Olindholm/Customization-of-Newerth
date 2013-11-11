@@ -1,4 +1,4 @@
-package util;
+package res;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +25,13 @@ public class NameTable {
 		int index2 = stringtable.indexOf("\n", index1);
 		
 		return stringtable.substring(index1, index2);
+	}
+	
+	public String getHeroName(String heroName) {
+		return getName("mstore_" + heroName + "_name");
+	}
+	public String getProductName(String productId) {
+		return getName("mstore_product" + productId + "_name");
 	}
 
 	// Adders

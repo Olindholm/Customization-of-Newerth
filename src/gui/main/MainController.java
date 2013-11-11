@@ -20,6 +20,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
 import javafx.stage.*;
@@ -66,7 +68,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		fol.setFilter(heroFilter.getText());
 	}
 	@FXML
-	public void handleHotkey() {
+	public void handleHotkey(KeyEvent event) throws IOException {
 		//Ctrl+A		= Apply
 		//Ctrl+Shift+A	= Apply & Launch
 		//Alt+F4		= Close
@@ -77,9 +79,13 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		//Ctrl+S		= Save As...
 		
 		//F5			= Refresh
-		
+		if(event.getCode() == KeyCode.F5) {
+			handleRefreshResources();
+		}
 		//F8			= Preferences
-		
+		else if(event.getCode() == KeyCode.F8) {
+			handlePreferences();
+		}
 		//F1			= Help Instructions
 	}
 	@FXML
