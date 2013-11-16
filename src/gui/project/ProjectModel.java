@@ -1,11 +1,11 @@
 package gui.project;
 
-import gui.PropertiesModel;
+import gui.StandardModel;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ProjectModel extends PropertiesModel {
+public class ProjectModel extends StandardModel {
 	// STATIC Variables
 
 	// STATIC Methods

@@ -1,9 +1,9 @@
 package gui.main;
 
-import gui.PropertiesModel;
+import gui.StandardModel;
 import gui.project.ProjectModel;
 
-public class MainModel extends PropertiesModel {
+public class MainModel extends StandardModel {
 	// STATIC Variables
 
 	// STATIC Methods

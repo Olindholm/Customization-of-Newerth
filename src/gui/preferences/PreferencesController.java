@@ -7,19 +7,15 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-import gui.Controller;
-import gui.Model;
-import gui.View;
+import gui.*;
 
-public class PreferencesController implements Controller {
+public class PreferencesController extends StandardController {
 	// STATIC Variables
 	public static final String TITLE = "Preferences";
 
 	// STATIC Methods
 
 	// Variables
-	Model	theModel;
-	View	theView;
 	
 	//General
 	//@FXML private ComboBox language;
@@ -31,8 +27,8 @@ public class PreferencesController implements Controller {
 	@FXML private CheckBox	autoRefresh;
 	
 	// Constructors
-	public PreferencesController(Model model) {
-		theModel = model;
+	public PreferencesController(View view, Model model) {
+		super(view, model, "gui/prefrences/PreferencesView.fxml");
 	}
 
 	// Setters
@@ -69,15 +65,14 @@ public class PreferencesController implements Controller {
 		}
 	}
 	@FXML
+	@Override
 	public void handleClose() {
 		theView.close();
 	}
 
 	// Implementation Methods
 	@Override
-	public void initialize(View view) {
-		theView = view;
-		
+	public void initialize() {
 		//Inserting the correct values into it's corresponding place...
 		autoUpdate.setSelected(theModel.getBoolean("autoUpdate"));
 		
@@ -86,8 +81,8 @@ public class PreferencesController implements Controller {
 		autoRefresh.setSelected(theModel.getBoolean("autoRefresh"));
 		
 		//PreferencesView(Window)
-		view.setTitle(TITLE);
-		view.setResizable(false);
+		theView.setTitle(TITLE);
+		theView.setResizable(false);
 	}
 
 	// Internal Classes

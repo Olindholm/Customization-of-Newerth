@@ -19,6 +19,8 @@
             <MenuItem mnemonicParsing="false" onAction="#handleApplyNLaunch" text="Apply &amp; Launch" />
             <MenuItem mnemonicParsing="false" onAction="#handleUnapply" text="Unapply" />
             <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleViewGameFolder" text="View Game Folder" />
+            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#handleClose" text="Close" />
           </items>
         </Menu>
@@ -32,12 +34,18 @@
         </Menu>
         <Menu mnemonicParsing="false" text="View">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#handleViewGameFolder" text="View Game Folder" />
-            <MenuItem mnemonicParsing="false" onAction="#handleRefreshResources" text="Refresh Resources" />
+            <RadioMenuItem mnemonicParsing="false" text="Box-Map">
+              <toggleGroup>
+                <ToggleGroup fx:id="map" />
+              </toggleGroup>
+            </RadioMenuItem>
+            <RadioMenuItem disable="false" mnemonicParsing="false" selected="false" text="Radio-Map" toggleGroup="$map" visible="true" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Settings">
           <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleRefreshResources" text="Refresh Resources" />
+            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#handlePreferences" text="Preferences" />
           </items>
         </Menu>
@@ -74,15 +82,7 @@
                               <children>
                                 <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="428.0" prefWidth="564.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                   <children>
-                                    <ScrollPane id="ScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="418.0" prefViewportWidth="384.0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
-                                      <content>
-                                        <VBox fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="250.0" spacing="5.0">
-                                          <padding>
-                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-                                          </padding>
-                                        </VBox>
-                                      </content>
-                                    </ScrollPane>
+                                    <ScrollPane id="ScrollPane" fx:id="avatarField" content="$null" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefViewportHeight="418.0" prefViewportWidth="384.0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" />
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="100.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                       <children>
                                         <CheckBox fx:id="forceAllAvatars" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Force All Avatars to..." />

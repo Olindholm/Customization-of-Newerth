@@ -6,15 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import gui.*;
 
-public class ProjectController implements Controller, ChangeListener<Number> {
+public class ProjectController extends StandardController implements ChangeListener<Number> {
 	public static final String TITLE = "New Project";
 	
 	public static final String SCHEMESTART = "Force All to ";
 	public static final String SCHEMEEND = " Avatar";
 	public static final String[] SCHEME = {"No Scheme", SCHEMESTART + "Default" + SCHEMEEND, SCHEMESTART + "1st" + SCHEMEEND, SCHEMESTART + "2nd" + SCHEMEEND, SCHEMESTART + "3rd" + SCHEMEEND};
-	
-	Model	theModel;
-	View	theView;
 	
 	@FXML public TextField		name;
 	
@@ -24,8 +21,8 @@ public class ProjectController implements Controller, ChangeListener<Number> {
 	@FXML public Label			schemeLabel;
 	@FXML public Slider			scheme;
 	
-	public ProjectController(Model model) {
-		theModel = model;
+	public ProjectController(View view, Model model) {
+		super(view, model, "gui/project/ProjectController.fxml");
 	}
 	
 	@FXML
@@ -33,13 +30,11 @@ public class ProjectController implements Controller, ChangeListener<Number> {
 		//Saving preferences...
 		theModel.setInt("scheme", (int) scheme.getValue());
 		
-		theView.close(true);
+		theView.closeAndRespond();
 	}
 	
 	@Override
-	public void initialize(View view) {
-		this.theView = view;
-		
+	public void initialize() {
 		//Inserting the correct values into it's corresponding place...
 		scheme.setValue(theModel.getInt("scheme"));
 		changed(null, null, scheme.getValue());
@@ -58,8 +53,8 @@ public class ProjectController implements Controller, ChangeListener<Number> {
 		});
 		
 		//PreferencesView(Window)
-		view.setTitle(TITLE);
-		view.setResizable(false);
+		theView.setTitle(TITLE);
+		theView.setResizable(false);
 	}
 	@Override
 	@FXML

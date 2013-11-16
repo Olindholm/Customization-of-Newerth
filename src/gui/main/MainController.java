@@ -2,52 +2,41 @@ package gui.main;
 
 import gui.*;
 import gui.util.*;
-import gui.preferences.PreferencesController;
+import gui.project.*;
 import gui.progress.ProgressController;
-import gui.project.ProjectModel;
-import gui.project.ProjectController;
+import gui.preferences.PreferencesController;
 
-import java.awt.Desktop;
 import java.io.*;
+import java.awt.Desktop;
 import java.util.zip.ZipFile;
 
-import res.ResourceExtractor;
-import res.ResourceTransformer;
-import res.ent.Hero;
+import res.*;
+import res.ent.*;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.*;
 import javafx.stage.*;
+import javafx.beans.value.*;
+import javafx.scene.layout.*;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
+import javafx.application.Platform;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-
-public class MainController implements Controller, ChangeListener<Hero> {
+public class MainController extends StandardController implements ChangeListener<Toggle> {
 	// STATIC Variables
-	public static final String TITLE = "Customization of Newerth";
 	
 	// STATIC Methods
 	
 	// Variables
-	MainModel	theModel;
-	View		theView;
-	
 	@FXML private VBox				rootPanel;
-	
-	@FXML private Menu				projectMenu;
 	
 	@FXML private TextField			heroFilter;
 	@FXML private ListView<Hero>	heroList;
 	
 	// Constructors
-	public MainController(MainModel model) {
-		theModel = model;
+	public MainController(View view, MainModel model) {
+		super(view, model, "gui/main/MainView.fxml");
 	}
 	
 	// Setters
@@ -114,21 +103,21 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		}
 		
 		//Now to the action...
-		ProjectModel model = new ProjectModel();
-		View view = new View("gui/project/ProjectView.fxml", new ProjectController(model));
+		Controller controller = new ProjectController(new View(), new ProjectModel());
+		View view = controller.getView();
 		view.initModality(Modality.WINDOW_MODAL);
-		view.setOwner(theView);
+		view.initOwner(theView);
 		
 		if(view.showDialog()) {
-			setProject(model);
+			setProject((ProjectModel) controller.getModel());
 		}
 	}
 	private void setProject(ProjectModel model) {
-		theModel.project = model;
+		((MainModel) theModel).project = model;
 		theModel.setString("projectFile", "");
 		
 		//Load in the new proeprties...
-		loadMap(heroList.getSelectionModel().getSelectedItem());
+		reloadMaps();
 	}
 	@FXML
 	public void handleOpen() {
@@ -152,26 +141,27 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	}
 	private void loadProject(File projectFile) {
 		try {
-			theModel.project = new ProjectModel(new FileInputStream(projectFile));
+			((MainModel) theModel).project = new ProjectModel(new FileInputStream(projectFile));
 			theModel.setString("projectFile", projectFile.getPath());
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read or access " + projectFile.getPath(), e);
 		}
 		
 		//Load in the new proeprties...
-		loadMap(heroList.getSelectionModel().getSelectedItem());
+		reloadMaps();
 	}
 	@FXML
 	public void handleEdit() {
 		//Saving current Map to Project in case the user wants to modify the project.
-		saveMap(heroList.getSelectionModel().getSelectedItem());
+		saveMaps();
 		
-		View view = new View("gui/project/ProjectView.fxml", new ProjectController(theModel.project));
+		Controller controller = new ProjectController(new View(), ((MainModel) theModel).project);
+		View view = controller.getView();
 		view.initModality(Modality.WINDOW_MODAL);
-		view.setOwner(theView);
+		view.initOwner(theView);
 		view.showAndWait();
 		
-		loadMap(heroList.getSelectionModel().getSelectedItem());
+		reloadMaps();
 	}
 	@FXML
 	public void handleSaveAs() {
@@ -185,10 +175,10 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	}
 	private void saveProject(File projectFile) {
 		//Saving the current properties
-		saveMap(heroList.getSelectionModel().getSelectedItem());
+		saveMaps();
 		
 		try {
-			theModel.project.store(new FileOutputStream(projectFile), null);
+			((MainModel) theModel).project.store(new FileOutputStream(projectFile), null);
 			theModel.setString("projectFile", projectFile.getPath());
 		} catch (IOException e) {
 			throw new RuntimeException("Could not write to or access " + projectFile.getPath(), e);
@@ -204,62 +194,64 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		explorer.browse(gameFolder.toURI());
 	}
 	@FXML
-	public void handleRefreshResources() throws IOException {
+	public void handleRefreshResources() {
 		//Creating a progress gui;
-		final ProgressController progress = new ProgressController();
-		final View view = new View("gui/Progress/ProgressView.fxml", progress);
+		final ProgressController controller = new ProgressController(new View());
+		View view = controller.getView();
 		view.initModality(Modality.WINDOW_MODAL);
-		view.setOwner(theView);
+		view.initOwner(theView);
 		view.show();
 		
 		//Flushing current resources
 		heroList.getItems().clear();
 		
 		//Collecting new resources...
-		ResourceExtractor extractor = new ResourceExtractor(new ZipFile(theModel.getString("resourceFile")));
-		final ResourceTransformer transformer = new ResourceTransformer(extractor);
-		progress.setMaxiumum(transformer.totalElements());
-		
-		int threads = theModel.getInt("threading");
-		for(int i = 0;i < threads;i++) {
-			new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					while(transformer.remainingElements() > 0 && !view.isClosed()) {
-						final Hero hero = transformer.nextElement();
-						
-						Platform.runLater(new Runnable() {
+		try {
+			ResourceExtractor extractor = new ResourceExtractor(new ZipFile(theModel.getString("resourceFile")));
+			final ResourceTransformer transformer = new ResourceTransformer(extractor);
+			controller.setMaxiumum(transformer.totalElements());
+			
+			int threads = theModel.getInt("threading");
+			for(int i = 0;i < threads;i++) {
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						while(transformer.remainingElements() > 0 && controller.getView().isShowing()) {
+							final Hero hero = transformer.nextElement();
 							
-							@Override
-							public void run() {
-								heroList.getItems().add(hero);
-								progress.setValue(progress.getValue()+1, hero.toString() + "...");
-							}
-							
-						});
+							Platform.runLater(new Runnable() {
+								
+								@Override
+								public void run() {
+									heroList.getItems().add(hero);
+									controller.setValue(controller.getValue()+1, hero.toString() + "...");
+								}
+								
+							});
+						}
 					}
-				}
-				
-			}).start();
+					
+				}).start();
+			}
+		} catch(IOException e) {
+			throw new RuntimeException("Could not read to or access " + theModel.getString("resourceFile"), e);
 		}
 	}
 	@FXML
 	public void handlePreferences() {
-		View view = new View("gui/preferences/PreferencesView.fxml", new PreferencesController(theModel));
+		Controller controller = new PreferencesController(new View(), theModel);
+		View view = controller.getView();
 		view.initModality(Modality.WINDOW_MODAL);
-		view.setOwner(theView);
+		view.initOwner(theView);
 		view.showAndWait();
 	}
-	@Override
 	@FXML
+	@Override
 	public void handleClose() {
 		//Saving properties for next run
 		theModel.setInt("mainWidth", (int) theView.getWidth());
 		theModel.setInt("mainHeight", (int) theView.getHeight());
-		
-		//Saving the Config
-		theModel.store(new File("config.properties"), null);
 		
 		//Saving the project...
 		File projectFile = new File(theModel.getString("projectFile"));
@@ -270,7 +262,7 @@ public class MainController implements Controller, ChangeListener<Hero> {
 			handleSaveAs();
 		}
 		//... and the config
-		theModel.store(new File("config.properties"), null);
+		((MainModel) theModel).store(new File("config.properties"), null);
 		
 		//Finally closing the stage resulting the progam to exit.
 		theView.close();
@@ -279,15 +271,22 @@ public class MainController implements Controller, ChangeListener<Hero> {
 	// Implementation Methods
 	@SuppressWarnings("unchecked")
 	@Override
-	public void initialize(View view) {
-		this.theView = view;
-		
+	public void initialize() {
 		//ListView(Heroes)
 		SortedObservableList<Hero> sol = SortedObservableList.newInstance();
 		FilterableObservableList<Hero> fol = new FilterableObservableList<Hero>(sol);
 		
 		heroList.setItems(fol);
-		heroList.getSelectionModel().selectedItemProperty().addListener(this);
+		heroList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Hero>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Hero> observable, Hero oldHero, Hero newHero) {
+				
+			}
+			
+		});
+		
+		//Map
 		
 		//Project
 		File projectFile = new File(theModel.getString("projectFile"));
@@ -299,29 +298,34 @@ public class MainController implements Controller, ChangeListener<Hero> {
 		}
 		
 		//MainView(Window)
-		view.setTitle(TITLE);
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/main/icon.png")));
+		theView.setTitle("Customization of Newerth");
+		theView.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/main/icon.png")));
 		
-		view.setWidth(theModel.getInt("mainWidth"));
-		view.setHeight(theModel.getInt("mainHeight"));
+		theView.setWidth(theModel.getInt("mainWidth"));
+		theView.setHeight(theModel.getInt("mainHeight"));
 		
-		view.setMinWidth(rootPanel.getMinWidth());
-		view.setMinHeight(rootPanel.getMinHeight());
+		theView.setMinWidth(rootPanel.getMinWidth());
+		theView.setMinHeight(rootPanel.getMinHeight());
 	}
 	@Override
-	public void changed(ObservableValue<? extends Hero> observable, Hero oldHero, Hero newHero) {
-		saveMap(oldHero);
-		loadMap(newHero);
+	public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
+		/*
+		 * When the toggle is changed the behaviour is really odd,
+		 * instead of calling this with the oldToggle and the newToggle
+		 * it is called twice...
+		 * 
+		 * 1. changed(..., oldToggle, null);
+		 * 2. changed(..., null, newToggle);
+		 * 
+		 * To this behaviour a check of the newToggle value is required...
+		 */
+		if(newToggle != null) {
+			//avatarField.
+		}
 	}
-	public void saveMap(Hero hero) {
-		//if(hero != null) {
-			System.out.println("Saving " + hero);
-		//}
+	public void saveMaps() {
 	}
-	public void loadMap(Hero hero) {
-		//if(hero != null) {
-			System.out.println("Loading " + hero);
-		//}
+	public void reloadMaps() {
 	}
 	
 	// Internal Classes

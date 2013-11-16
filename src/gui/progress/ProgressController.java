@@ -3,11 +3,9 @@ package gui.progress;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-import gui.Controller;
-import gui.Model;
-import gui.View;
+import gui.*;
 
-public class ProgressController implements Controller {
+public class ProgressController extends StandardController {
 	// STATIC Variables
 	public static final String TITLE = "Progress";
 
@@ -23,6 +21,9 @@ public class ProgressController implements Controller {
 	int max		= 100;
 	
 	// Constructors
+	public ProgressController(View view) {
+		super(view, null, "gui/progress/ProgressView.fxml");
+	}
 	
 	// Setters
 	public void setMaxiumum(int value) {
@@ -66,14 +67,12 @@ public class ProgressController implements Controller {
 
 	// Implementation Methods
 	@Override
-	public void initialize(View view) {
-		theView = view;
-		
+	public void initialize() {
 		//Inserting the correct values into it's corresponding place...
 		
 		//PreferencesView(Window)
-		view.setTitle(TITLE);
-		view.setResizable(false);
+		theView.setTitle(TITLE);
+		theView.setResizable(false);
 	}
 
 	// Internal Classes

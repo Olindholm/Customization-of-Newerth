@@ -8,26 +8,26 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
-import gui.Controller;
-import gui.Model;
-import gui.View;
 
-public class ExceptionController implements Controller {
+import gui.*;
+
+public class ExceptionController extends StandardController {
 	
 	Model	theModel;
 	View	theView;
 	
 	@FXML private VBox				rootPanel;
 	
-	private String message;
+	private String theMessage;
 	@FXML private Label messageLabel;
 	
-	private Throwable t;
+	private Throwable theTrowable;
 	@FXML private TextArea exceptionArea;
 
-	public ExceptionController(String message, Throwable t) {
-		this.message = message;
-		this.t = t;
+	public ExceptionController(View view, String message, Throwable trowable) {
+		super(view, null, "gui/exception/ExceptionView");
+		theMessage = message;
+		theTrowable = trowable;
 	}
 	
 	@FXML
@@ -41,17 +41,15 @@ public class ExceptionController implements Controller {
 	}
 
 	@Override
-	public void initialize(View view) {
-		this.theView = view;
-		
+	public void initialize() {
 		messageLabel.setWrapText(true);
-		messageLabel.setText(message);
+		messageLabel.setText(theMessage);
 		
-		exceptionArea.setText(getPrintStackTraceAsString(t));
+		exceptionArea.setText(getPrintStackTraceAsString(theTrowable));
 		
-		view.setTitle("Message");
-		view.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/exception/icon.png")));
-		view.setResizable(false);
+		theView.setTitle("Message");
+		theView.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/exception/icon.png")));
+		theView.setResizable(false);
 	}
 	
 	private String getPrintStackTraceAsString(Throwable t) {

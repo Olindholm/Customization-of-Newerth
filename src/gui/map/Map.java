@@ -1,6 +1,9 @@
-package gui;
+package gui.map;
 
-public interface Controller {
+import res.ent.Hero;
+import gui.Model;
+
+public interface Map {
 	// STATIC Variables
 
 	// STATIC Methods
@@ -8,11 +11,11 @@ public interface Controller {
 	// Variables
 
 	// Constructors
-	
+
 	// Setters
-	
+	public void setModel(Model model);
+
 	// Getters
-	public View getView();
 	public Model getModel();
 
 	// Adders
@@ -20,8 +23,8 @@ public interface Controller {
 	// Removers
 
 	// Others Methods
-	public void initialize();
-	public void handleClose();
+	public void load(Hero hero);
+	public void save();
 
 	// Implementation Methods
 

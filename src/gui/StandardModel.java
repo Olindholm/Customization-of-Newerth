@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public abstract class PropertiesModel extends Properties implements Model {
+public abstract class StandardModel extends Properties implements Model {
 	// STATIC Variables
 
 	// STATIC Methods
@@ -13,9 +13,9 @@ public abstract class PropertiesModel extends Properties implements Model {
 	// Variables
 
 	// Constructors
-	public PropertiesModel() {
+	public StandardModel() {
 	}
-	public PropertiesModel(String defaultsPath) {
+	public StandardModel(String defaultsPath) {
 		super(new Properties());
 		try {
 			super.defaults.load(ClassLoader.getSystemResourceAsStream(defaultsPath));
