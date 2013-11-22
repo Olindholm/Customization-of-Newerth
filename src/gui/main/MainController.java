@@ -2,7 +2,8 @@ package gui.main;
 
 import gui.*;
 import gui.util.*;
-import gui.map.MapController;
+import gui.map.*;
+import gui.map.box.BoxMap;
 import gui.project.*;
 import gui.progress.ProgressController;
 import gui.preferences.PreferencesController;
@@ -24,7 +25,7 @@ import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public class MainController extends StandardController implements ChangeListener<Toggle> {
+public class MainController extends StandardController {
 	// STATIC Variables
 	
 	// STATIC Methods
@@ -35,12 +36,15 @@ public class MainController extends StandardController implements ChangeListener
 	@FXML private TextField			heroFilter;
 	@FXML private ListView<Hero>	heroList;
 	
+	@FXML private ToggleGroup		selectedMap;
+	@FXML private Map[]				maps = {new BoxMap(), new BoxMap()};
+	
 	@FXML private VBox				avatarBox;
 	@FXML private MapController		avatarMap;
 	
 	// Constructors
 	@SuppressWarnings("unchecked")
-	public MainController(View view, MainModel model) {
+	public MainController(View view, Model model) {
 		super(view, model, "gui/main/MainView.fxml");
 		
 		
@@ -53,13 +57,39 @@ public class MainController extends StandardController implements ChangeListener
 
 			@Override
 			public void changed(ObservableValue<? extends Hero> observable, Hero oldHero, Hero newHero) {
-				
+				reloadMaps();
 			}
 			
 		});
 		
 		//Initiating map controllers
 		avatarMap = new MapController(avatarBox, null, null);
+		
+		//selectedMap
+		selectedMap.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
+				/*
+				 * When the toggle is changed the behaviour is really odd,
+				 * instead of calling this with the oldToggle and the newToggle
+				 * it is called twice...
+				 * 
+				 * 1. changed(..., oldToggle, null);
+				 * 2. changed(..., null, newToggle);
+				 * 
+				 * To this behaviour a check of the newToggle value is required...
+				 */
+				if(newToggle != null) {
+					int index = selectedMap.getToggles().indexOf(newToggle);
+					avatarMap.setMap(maps[index]);
+					theModel.setInt("selectedMap", index);
+					reloadMaps();
+				}
+			}
+			
+		});
+		selectedMap.selectToggle(selectedMap.getToggles().get(theModel.getInt("selectedMap")));
 		
 		//Project
 		File projectFile = new File(theModel.getString("projectFile"));
@@ -154,13 +184,6 @@ public class MainController extends StandardController implements ChangeListener
 			setProject(controller.getModel(), null);
 		}
 	}
-	private void setProject(Model model, String path) {
-		theModel.setString("projectFile", path != null ? path : "");
-		avatarMap.setModel(model);
-		
-		//Load in the new proeprties...
-		reloadMaps();
-	}
 	@FXML
 	public void handleOpen() {
 		//Saving the current project...
@@ -179,13 +202,6 @@ public class MainController extends StandardController implements ChangeListener
 		
 		if(chosenFile != null) {
 			loadProject(chosenFile);
-		}
-	}
-	private void loadProject(File projectFile) {
-		try {
-			setProject(new ProjectModel(new FileInputStream(projectFile)), projectFile.getPath());
-		} catch (IOException e) {
-			throw new RuntimeException("Could not read or access " + projectFile.getPath(), e);
 		}
 	}
 	@FXML
@@ -209,17 +225,6 @@ public class MainController extends StandardController implements ChangeListener
 		
 		if(chosenFile != null) {
 			saveProject(chosenFile);
-		}
-	}
-	private void saveProject(File projectFile) {
-		//Saving the current properties
-		saveMaps();
-		
-		try {
-			getProject().store(new FileOutputStream(projectFile), null);
-			theModel.setString("projectFile", projectFile.getPath());
-		} catch (IOException e) {
-			throw new RuntimeException("Could not write to or access " + projectFile.getPath(), e);
 		}
 	}
 	@FXML
@@ -307,25 +312,36 @@ public class MainController extends StandardController implements ChangeListener
 	}
 	
 	// Implementation Methods
-	@Override
-	public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
-		/*
-		 * When the toggle is changed the behaviour is really odd,
-		 * instead of calling this with the oldToggle and the newToggle
-		 * it is called twice...
-		 * 
-		 * 1. changed(..., oldToggle, null);
-		 * 2. changed(..., null, newToggle);
-		 * 
-		 * To this behaviour a check of the newToggle value is required...
-		 */
-		if(newToggle != null) {
-			//avatarField.
+	private void saveProject(File projectFile) {
+		//Saving the current properties
+		saveMaps();
+		
+		try {
+			getProject().store(new FileOutputStream(projectFile), null);
+			theModel.setString("projectFile", projectFile.getPath());
+		} catch (IOException e) {
+			throw new RuntimeException("Could not write to or access " + projectFile.getPath(), e);
 		}
+	}
+	private void loadProject(File projectFile) {
+		try {
+			setProject(new ProjectModel(new FileInputStream(projectFile)), projectFile.getPath());
+		} catch (IOException e) {
+			throw new RuntimeException("Could not read or access " + projectFile.getPath(), e);
+		}
+	}
+	
+	private void setProject(Model model, String path) {
+		theModel.setString("projectFile", path != null ? path : "");
+		avatarMap.setModel(model);
+		
+		//Load in the new proeprties...
+		reloadMaps();
 	}
 	public ProjectModel getProject() {
 		return (ProjectModel) avatarMap.getModel();
 	}
+	
 	public void saveMaps() {
 		avatarMap.save();
 	}

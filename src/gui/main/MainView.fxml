@@ -36,10 +36,10 @@
           <items>
             <RadioMenuItem mnemonicParsing="false" text="Box-Map">
               <toggleGroup>
-                <ToggleGroup fx:id="map" />
+                <ToggleGroup fx:id="selectedMap" />
               </toggleGroup>
             </RadioMenuItem>
-            <RadioMenuItem disable="false" mnemonicParsing="false" selected="false" text="Radio-Map" toggleGroup="$map" visible="true" />
+            <RadioMenuItem disable="false" mnemonicParsing="false" selected="false" text="Radio-Map" toggleGroup="$selectedMap" visible="true" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Settings">

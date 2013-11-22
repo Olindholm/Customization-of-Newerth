@@ -12,9 +12,6 @@ public class ProgressController extends StandardController {
 	// STATIC Methods
 
 	// Variables
-	Model	theModel;
-	View	theView;
-	
 	@FXML private ProgressBar	progressBar;
 	@FXML private Label			progressLabel;
 	
