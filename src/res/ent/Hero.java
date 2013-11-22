@@ -28,6 +28,9 @@ public class Hero {
 	public Avatar getAvatar(int i) {
 		return avatars.get(i);
 	}
+	public Avatar[] getAvatars() {
+		return avatars.toArray(new Avatar[avatars.size()]);
+	}
 	public int getAvatarCount() {
 		return avatars.size();
 	}

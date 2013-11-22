@@ -13,21 +13,23 @@ import gui.*;
 
 public class ExceptionController extends StandardController {
 	
-	Model	theModel;
-	View	theView;
-	
 	@FXML private VBox				rootPanel;
 	
-	private String theMessage;
 	@FXML private Label messageLabel;
-	
-	private Throwable theTrowable;
 	@FXML private TextArea exceptionArea;
 
 	public ExceptionController(View view, String message, Throwable trowable) {
-		super(view, null, "gui/exception/ExceptionView");
-		theMessage = message;
-		theTrowable = trowable;
+		super(view, null, "gui/exception/ExceptionView.fxml");
+		
+		//Init settings
+		messageLabel.setWrapText(true);
+		messageLabel.setText(message);
+		
+		exceptionArea.setText(getPrintStackTraceAsString(trowable));
+		
+		theView.setTitle("Message");
+		theView.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/exception/icon.png")));
+		theView.setResizable(false);
 	}
 	
 	@FXML
@@ -38,18 +40,6 @@ public class ExceptionController extends StandardController {
 	@FXML
 	public void handleExit() {
 		System.exit(0);
-	}
-
-	@Override
-	public void initialize() {
-		messageLabel.setWrapText(true);
-		messageLabel.setText(theMessage);
-		
-		exceptionArea.setText(getPrintStackTraceAsString(theTrowable));
-		
-		theView.setTitle("Message");
-		theView.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/exception/icon.png")));
-		theView.setResizable(false);
 	}
 	
 	private String getPrintStackTraceAsString(Throwable t) {

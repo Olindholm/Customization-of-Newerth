@@ -28,7 +28,18 @@ public class PreferencesController extends StandardController {
 	
 	// Constructors
 	public PreferencesController(View view, Model model) {
-		super(view, model, "gui/prefrences/PreferencesView.fxml");
+		super(view, model, "gui/preferences/PreferencesView.fxml");
+		
+		//Inserting the correct values into it's corresponding place...
+		autoUpdate.setSelected(theModel.getBoolean("autoUpdate"));
+		
+		resourceFile.setText(theModel.getString("resourceFile"));
+		threading.setValue(theModel.getInt("threading"));
+		autoRefresh.setSelected(theModel.getBoolean("autoRefresh"));
+		
+		//PreferencesView(Window)
+		theView.setTitle(TITLE);
+		theView.setResizable(false);
 	}
 
 	// Setters
@@ -71,19 +82,6 @@ public class PreferencesController extends StandardController {
 	}
 
 	// Implementation Methods
-	@Override
-	public void initialize() {
-		//Inserting the correct values into it's corresponding place...
-		autoUpdate.setSelected(theModel.getBoolean("autoUpdate"));
-		
-		resourceFile.setText(theModel.getString("resourceFile"));
-		threading.setValue(theModel.getInt("threading"));
-		autoRefresh.setSelected(theModel.getBoolean("autoRefresh"));
-		
-		//PreferencesView(Window)
-		theView.setTitle(TITLE);
-		theView.setResizable(false);
-	}
 
 	// Internal Classes
 

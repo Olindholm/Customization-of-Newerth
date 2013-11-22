@@ -2,6 +2,7 @@ package gui.main;
 
 import gui.*;
 import gui.util.*;
+import gui.map.MapController;
 import gui.project.*;
 import gui.progress.ProgressController;
 import gui.preferences.PreferencesController;
@@ -34,9 +35,50 @@ public class MainController extends StandardController implements ChangeListener
 	@FXML private TextField			heroFilter;
 	@FXML private ListView<Hero>	heroList;
 	
+	@FXML private VBox				avatarBox;
+	@FXML private MapController		avatarMap;
+	
 	// Constructors
+	@SuppressWarnings("unchecked")
 	public MainController(View view, MainModel model) {
 		super(view, model, "gui/main/MainView.fxml");
+		
+		
+		//ListView(Heroes)
+		SortedObservableList<Hero> sol = SortedObservableList.newInstance();
+		FilterableObservableList<Hero> fol = new FilterableObservableList<Hero>(sol);
+		
+		heroList.setItems(fol);
+		heroList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Hero>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Hero> observable, Hero oldHero, Hero newHero) {
+				
+			}
+			
+		});
+		
+		//Initiating map controllers
+		avatarMap = new MapController(avatarBox, null, null);
+		
+		//Project
+		File projectFile = new File(theModel.getString("projectFile"));
+		if(projectFile.exists()) {
+			loadProject(projectFile);
+		}
+		else {
+			setProject(new ProjectModel(), null);
+		}
+		
+		//MainView(Window)
+		theView.setTitle("Customization of Newerth");
+		theView.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/main/icon.png")));
+		
+		theView.setWidth(theModel.getInt("mainWidth"));
+		theView.setHeight(theModel.getInt("mainHeight"));
+		
+		theView.setMinWidth(rootPanel.getMinWidth());
+		theView.setMinHeight(rootPanel.getMinHeight());
 	}
 	
 	// Setters
@@ -109,12 +151,12 @@ public class MainController extends StandardController implements ChangeListener
 		view.initOwner(theView);
 		
 		if(view.showDialog()) {
-			setProject((ProjectModel) controller.getModel());
+			setProject(controller.getModel(), null);
 		}
 	}
-	private void setProject(ProjectModel model) {
-		((MainModel) theModel).project = model;
-		theModel.setString("projectFile", "");
+	private void setProject(Model model, String path) {
+		theModel.setString("projectFile", path != null ? path : "");
+		avatarMap.setModel(model);
 		
 		//Load in the new proeprties...
 		reloadMaps();
@@ -141,21 +183,17 @@ public class MainController extends StandardController implements ChangeListener
 	}
 	private void loadProject(File projectFile) {
 		try {
-			((MainModel) theModel).project = new ProjectModel(new FileInputStream(projectFile));
-			theModel.setString("projectFile", projectFile.getPath());
+			setProject(new ProjectModel(new FileInputStream(projectFile)), projectFile.getPath());
 		} catch (IOException e) {
 			throw new RuntimeException("Could not read or access " + projectFile.getPath(), e);
 		}
-		
-		//Load in the new proeprties...
-		reloadMaps();
 	}
 	@FXML
 	public void handleEdit() {
 		//Saving current Map to Project in case the user wants to modify the project.
 		saveMaps();
 		
-		Controller controller = new ProjectController(new View(), ((MainModel) theModel).project);
+		Controller controller = new ProjectController(new View(), getProject());
 		View view = controller.getView();
 		view.initModality(Modality.WINDOW_MODAL);
 		view.initOwner(theView);
@@ -178,7 +216,7 @@ public class MainController extends StandardController implements ChangeListener
 		saveMaps();
 		
 		try {
-			((MainModel) theModel).project.store(new FileOutputStream(projectFile), null);
+			getProject().store(new FileOutputStream(projectFile), null);
 			theModel.setString("projectFile", projectFile.getPath());
 		} catch (IOException e) {
 			throw new RuntimeException("Could not write to or access " + projectFile.getPath(), e);
@@ -269,44 +307,6 @@ public class MainController extends StandardController implements ChangeListener
 	}
 	
 	// Implementation Methods
-	@SuppressWarnings("unchecked")
-	@Override
-	public void initialize() {
-		//ListView(Heroes)
-		SortedObservableList<Hero> sol = SortedObservableList.newInstance();
-		FilterableObservableList<Hero> fol = new FilterableObservableList<Hero>(sol);
-		
-		heroList.setItems(fol);
-		heroList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Hero>() {
-
-			@Override
-			public void changed(ObservableValue<? extends Hero> observable, Hero oldHero, Hero newHero) {
-				
-			}
-			
-		});
-		
-		//Map
-		
-		//Project
-		File projectFile = new File(theModel.getString("projectFile"));
-		if(projectFile.exists()) {
-			loadProject(projectFile);
-		}
-		else {
-			setProject(new ProjectModel());
-		}
-		
-		//MainView(Window)
-		theView.setTitle("Customization of Newerth");
-		theView.getIcons().add(new Image(ClassLoader.getSystemResourceAsStream("gui/main/icon.png")));
-		
-		theView.setWidth(theModel.getInt("mainWidth"));
-		theView.setHeight(theModel.getInt("mainHeight"));
-		
-		theView.setMinWidth(rootPanel.getMinWidth());
-		theView.setMinHeight(rootPanel.getMinHeight());
-	}
 	@Override
 	public void changed(ObservableValue<? extends Toggle> observable, Toggle oldToggle, Toggle newToggle) {
 		/*
@@ -323,9 +323,14 @@ public class MainController extends StandardController implements ChangeListener
 			//avatarField.
 		}
 	}
+	public ProjectModel getProject() {
+		return (ProjectModel) avatarMap.getModel();
+	}
 	public void saveMaps() {
+		avatarMap.save();
 	}
 	public void reloadMaps() {
+		avatarMap.load(heroList.getSelectionModel().getSelectedItem() != null ? heroList.getSelectionModel().getSelectedItem().getAvatars() : null);
 	}
 	
 	// Internal Classes

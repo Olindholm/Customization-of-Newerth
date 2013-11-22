@@ -23,6 +23,9 @@ public class ProgressController extends StandardController {
 	// Constructors
 	public ProgressController(View view) {
 		super(view, null, "gui/progress/ProgressView.fxml");
+		
+		theView.setTitle(TITLE);
+		theView.setResizable(false);
 	}
 	
 	// Setters
@@ -66,14 +69,6 @@ public class ProgressController extends StandardController {
 	}
 
 	// Implementation Methods
-	@Override
-	public void initialize() {
-		//Inserting the correct values into it's corresponding place...
-		
-		//PreferencesView(Window)
-		theView.setTitle(TITLE);
-		theView.setResizable(false);
-	}
 
 	// Internal Classes
 

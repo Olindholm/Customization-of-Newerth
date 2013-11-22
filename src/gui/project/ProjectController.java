@@ -23,18 +23,7 @@ public class ProjectController extends StandardController implements ChangeListe
 	
 	public ProjectController(View view, Model model) {
 		super(view, model, "gui/project/ProjectController.fxml");
-	}
-	
-	@FXML
-	public void handleOK() {
-		//Saving preferences...
-		theModel.setInt("scheme", (int) scheme.getValue());
 		
-		theView.closeAndRespond();
-	}
-	
-	@Override
-	public void initialize() {
 		//Inserting the correct values into it's corresponding place...
 		scheme.setValue(theModel.getInt("scheme"));
 		changed(null, null, scheme.getValue());
@@ -55,6 +44,14 @@ public class ProjectController extends StandardController implements ChangeListe
 		//PreferencesView(Window)
 		theView.setTitle(TITLE);
 		theView.setResizable(false);
+	}
+	
+	@FXML
+	public void handleOK() {
+		//Saving preferences...
+		theModel.setInt("scheme", (int) scheme.getValue());
+		
+		theView.closeAndRespond();
 	}
 	@Override
 	@FXML

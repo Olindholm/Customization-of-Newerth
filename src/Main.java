@@ -63,6 +63,7 @@ public class Main extends Application {
 				throwable.printStackTrace();
 			} catch(Exception e) {
 				e.printStackTrace();
+				throwable.printStackTrace();
 			}
 		}
 	}

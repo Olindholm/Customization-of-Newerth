@@ -1,11 +1,8 @@
 package gui.map.box;
 
-import res.ent.Hero;
+import gui.map.Map;
 
-import gui.Model;
-import gui.map.AbstractMap;
-
-public class BoxMap extends AbstractMap {
+public class BoxMap implements Map {
 	// STATIC Variables
 
 	// STATIC Methods
@@ -13,9 +10,6 @@ public class BoxMap extends AbstractMap {
 	// Variables
 
 	// Constructors
-	public BoxMap(Model model) {
-		super(model);
-	}
 
 	// Setters
 
@@ -26,16 +20,6 @@ public class BoxMap extends AbstractMap {
 	// Removers
 
 	// Others Methods
-	@Override
-	public void load(Hero hero) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	// Implementation Methods
 

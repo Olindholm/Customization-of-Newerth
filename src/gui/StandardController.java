@@ -26,7 +26,6 @@ public abstract class StandardController implements Controller {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setController(this);
 		Parent root = loadRoot(loader, fxmlPath);
-		initialize();
 		
 		Scene scene = new Scene(root);
 		theView.setScene(scene);

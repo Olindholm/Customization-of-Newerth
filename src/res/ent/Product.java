@@ -1,6 +1,6 @@
-package gui;
+package res.ent;
 
-public interface Controller {
+public interface Product {
 	// STATIC Variables
 
 	// STATIC Methods
@@ -8,19 +8,18 @@ public interface Controller {
 	// Variables
 
 	// Constructors
-	
+
 	// Setters
-	
+
 	// Getters
-	public View getView();
-	public Model getModel();
+	public String getProduct();
+	public void getIcon(); //TODO FIX!
 
 	// Adders
 
 	// Removers
 
 	// Others Methods
-	public void handleClose();
 
 	// Implementation Methods
 

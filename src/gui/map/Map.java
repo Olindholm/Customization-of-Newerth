@@ -1,7 +1,6 @@
 package gui.map;
 
-import res.ent.Hero;
-import gui.Model;
+import res.ent.Product;
 
 public interface Map {
 	// STATIC Variables
@@ -13,18 +12,18 @@ public interface Map {
 	// Constructors
 
 	// Setters
-	public void setModel(Model model);
+	public void setProduct(Product product, Product[] alternatives);
+	public void setSelected(Product selected);
 
 	// Getters
-	public Model getModel();
+	public Product getProduct();
+	public Product getSelected();
 
 	// Adders
 
 	// Removers
 
 	// Others Methods
-	public void load(Hero hero);
-	public void save();
 
 	// Implementation Methods
 

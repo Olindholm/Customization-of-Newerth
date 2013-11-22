@@ -1,32 +1,42 @@
 package gui.map;
 
+import res.ent.Product;
 import javafx.scene.layout.VBox;
 
 import gui.Model;
 
-public abstract class AbstractMap extends VBox implements Map {
+public class MapController {
 	// STATIC Variables
 
 	// STATIC Methods
 
 	// Variables
-	Model theModel;
+	Model	theModel;
+	VBox	theBox;
+	
+	Map		theMap;
 
 	// Constructors
-	public AbstractMap(Model model) {
-		setModel(model);
+	public MapController(VBox box, Model model, Map map) {
+		theBox = box;
+		theModel = model;
+		theMap = map;
 	}
 
 	// Setters
-	@Override
 	public void setModel(Model model) {
 		theModel = model;
 	}
+	public void setMap(Map map) {
+		theMap = map;
+	}
 
 	// Getters
-	@Override
 	public Model getModel() {
 		return theModel;
+	}
+	public Map getMap() {
+		return theMap;
 	}
 
 	// Adders
@@ -34,6 +44,11 @@ public abstract class AbstractMap extends VBox implements Map {
 	// Removers
 
 	// Others Methods
+	public void load(Product[] product) {
+		
+	}
+	public void save() {
+	}
 
 	// Implementation Methods
 

@@ -2,7 +2,7 @@ package res.ent;
 
 import org.w3c.dom.*;
 
-public class Avatar extends AbstractEntity {
+public class Avatar extends AbstractEntity implements Product {
 	//STATIC variables;
 	String[] ATTRIBUTE_NAMES = {
 		//Models & Effects
@@ -62,11 +62,14 @@ public class Avatar extends AbstractEntity {
 	//Set;
 	
 	//Get;
+	@Override
 	public String getProduct() {
 		return product;
 	}
-	public String getIcon() {
-		return icon;
+	@Override
+	public void getIcon() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	//Add;
