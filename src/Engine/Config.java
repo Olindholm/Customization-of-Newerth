@@ -278,7 +278,7 @@ public class Config {
 				Element instance = (Element) list.item(i);
 				
 				if(instance.getAttribute("name").equalsIgnoreCase("altAvatarPreviewPanel")) {
-					String key = instance.getAttribute("product").substring(instance.getAttribute("product").indexOf(".")+1);
+					String key = instance.getAttribute("product");
 					
 					//Figuring out it's name
 					int index1 = LLAccessories.indexOf(stringtable,"mstore_product"+instance.getAttribute("id")+"_name",0);
@@ -328,7 +328,7 @@ public class Config {
 		for(int i = 0;i <= heroes.size()-1;i++) {
 			try {
 				Element hero = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(resources.getInputStream(resources.getEntry(heroes.get(i).getEntry()))).getDocumentElement();
-				NodeList list = hero.getElementsByTagName("modifier");
+				NodeList list = hero.getElementsByTagName("altavatar");
 				
 				for(int ii = 0;ii <= heroes.get(i).getAvatarCount()-1;ii++) {
 					if(ii == 0) {
@@ -338,7 +338,7 @@ public class Config {
 						for(int iii = 0;iii <= list.getLength()-1;iii++) {
 							Element alt = (Element) list.item(iii);
 							
-							if(heroes.get(i).getAvatar(ii).getKey().equalsIgnoreCase(alt.getAttribute("key"))) {
+							if(heroes.get(i).getAvatar(ii).getKey().equalsIgnoreCase(alt.getAttribute("key")) || heroes.get(i).getAvatar(ii).getFullKey().equalsIgnoreCase(alt.getAttribute("key"))) {
 								heroes.get(i).getAvatar(ii).setIcon("00000000"+getPath(alt.getAttribute("icon2").replace("tga","dds"),heroes.get(i).getEntry()));
 								break;
 							}
@@ -662,8 +662,8 @@ public class Config {
 				}
 				
 				//Modifying heroentity;
-				Element orgheromodifier = getModifier(hero.getAvatar(index).getKey(),orgheroentity);
-				Element modheromodifier = getModifier(hero.getAvatar(ii).getKey(),modheroentity);
+				Element orgheromodifier = getModifier(hero.getAvatar(index),orgheroentity);
+				Element modheromodifier = getModifier(hero.getAvatar(ii),modheroentity);
 				
 				//Changing the attributes;
 				//Models & Effects;
@@ -715,14 +715,14 @@ public class Config {
 				//Projectile;
 				if(!orgheroentity.getAttribute("attackprojectile").isEmpty()) {
 					
-					String[] keys = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
+					String[] keys = {hero.getAvatar(index).getFullKey(),hero.getAvatar(ii).getFullKey()};
 					getProjectile(getAttribute(modheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),getAttribute(orgheromodifier.getAttribute("attackprojectile"),orgheroentity.getAttribute("attackprojectile")),projectiles.toArray(new String[projectiles.size()]),keys,folder);
 				}
 				//Abilities
 				for(int iii = 0;iii <= ability.length-1;iii++) {
 					if(ability[iii] != null) {
-						Element orgabilitymodifier = getModifier(hero.getAvatar(index).getKey(),orgabilityentity[iii]);
-						Element modabilitymodifier = getModifier(hero.getAvatar(ii).getKey(),modabilityentity[iii]);
+						Element orgabilitymodifier = getModifier(hero.getAvatar(index),orgabilityentity[iii]);
+						Element modabilitymodifier = getModifier(hero.getAvatar(ii),modabilityentity[iii]);
 						
 						if(modabilitymodifier != null) {
 							if(orgabilitymodifier == null) {
@@ -739,7 +739,7 @@ public class Config {
 							//Projectile;
 							if(!orgabilityentity[iii].getAttribute("projectile").isEmpty()) {
 								
-								String[] keys = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
+								String[] keys = {hero.getAvatar(index).getFullKey(),hero.getAvatar(ii).getFullKey()};
 								getProjectile(getAttribute(modabilitymodifier.getAttribute("projectile"),orgabilityentity[iii].getAttribute("projectile")),getAttribute(orgabilitymodifier.getAttribute("projectile"),orgabilityentity[iii].getAttribute("projectile")),projectiles.toArray(new String[projectiles.size()]),keys,folder);
 							}
 						}
@@ -747,7 +747,7 @@ public class Config {
 						//Onimpact etc... private void On(Element[] element,String[] filepath,String[] keys,String folder) {
 						Element[] one = {orgabilityentity[iii],orgabilitymodifier,modabilitymodifier};
 						String[] onpath = {ability[iii],ability[iii]};
-						String[] onkey = {hero.getAvatar(index).getKey(),hero.getAvatar(ii).getKey()};
+						String[] onkey = {hero.getAvatar(index).getFullKey(),hero.getAvatar(ii).getFullKey()};
 						On(one,onpath,onkey,folder,projectiles.toArray(new String[projectiles.size()]));
 						
 					}
@@ -857,7 +857,7 @@ public class Config {
 				elsi = false;
 			}
 			
-			if(child.getTagName().equalsIgnoreCase("hasmodifier")) {
+			if(child.getTagName().equalsIgnoreCase("hasavatarkey")) {
 				if(child.getAttribute("name").toLowerCase().contains("alt")
 				|| child.getAttribute("name").toLowerCase().contains("female")
 				|| child.getAttribute("name").toLowerCase().contains("reskin")
@@ -975,16 +975,16 @@ public class Config {
 			main.log.print(e,"Failed to write to "+modprojectilepath,true);
 		}
 	}
-	public Element getModifier(String key,Element entity) {
-		if(entity.getAttribute("key").equalsIgnoreCase(key)) {
+	public Element getModifier(Avatar avatar, Element entity) {
+		if(entity.getAttribute("key").equalsIgnoreCase(avatar.getKey()) || entity.getAttribute("key").equalsIgnoreCase(avatar.getFullKey())) {
 			return entity;
 		}
 		
-		NodeList list = entity.getElementsByTagName("modifier");
+		NodeList list = entity.getElementsByTagName("altavatar");
 		for(int i = 0;i <= list.getLength()-1;i++) {
 			Element element = (Element) list.item(i);
 			
-			if(element.getAttribute("key").equalsIgnoreCase(key)) {
+			if(element.getAttribute("key").equalsIgnoreCase(avatar.getKey()) || element.getAttribute("key").equalsIgnoreCase(avatar.getFullKey())) {
 				return element;
 			}
 		}
@@ -1135,7 +1135,7 @@ public class Config {
 			if(list.item(n).getNodeType() == Node.ELEMENT_NODE) {
 				Element mall = (Element) list.item(n);
 				
-				if(mall.getNodeName().equalsIgnoreCase("modifier")) {
+				if(mall.getNodeName().equalsIgnoreCase("altavatar")) {
 					//Possibly do something;
 				}
 				else {

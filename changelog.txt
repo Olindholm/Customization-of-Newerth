@@ -32,6 +32,8 @@ Table of content,
 			3.0.1.0
 				General
 				Bugs & Fixes
+			3.0.1.1
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -100,4 +102,16 @@ Table of content,
 		
 		== Bugs & Fixes ==
 			- Fixed a bug which made unable to select Draconis
+			
+	3.0.1.0
+		== General ==
+			- Update the Exception Gui.
+			
+		== Bugs & Fixes ==
+			- Fixed a bug which made unable to select Draconis
+			
+	3.0.1.1
+		== Bugs & Fixes ==
+			- Fixed a bug preventing CoN from finding any valid Avatars.
+	
 	

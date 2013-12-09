@@ -26,8 +26,11 @@ public class Avatar {
 	public String getName() {
 		return name;
 	}
-	public String getKey() {
+	public String getFullKey() {
 		return key;
+	}
+	public String getKey() {
+		return key.substring(key.indexOf(".")+1);
 	}
 	public String getIcon() {
 		return icon;
