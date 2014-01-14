@@ -34,6 +34,8 @@ Table of content,
 				Bugs & Fixes
 			3.0.1.1
 				Bugs & Fixes
+			3.0.1.2
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -113,5 +115,10 @@ Table of content,
 	3.0.1.1
 		== Bugs & Fixes ==
 			- Fixed a bug preventing CoN from finding any valid Avatars.
+			
+	3.0.1.2
+		== Bugs & Fixes ==
+			- Fixed a bug causing projectile not to change due to a typo in the code.
+			- Ignored a bug causing Behemoth's alt avatars to not display and work correctly due to HoN alt register not being correct.
 	
 	

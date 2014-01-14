@@ -619,7 +619,7 @@ public class Config {
 				
 				if(entry.startsWith("heroes/"+hero.getFolder()) && entry.endsWith(".entity")) {
 					//Projcetiles;
-					if(entry.contains("projectil")) {
+					if(entry.contains("projectile")) {
 						projectiles.add(entry);
 					}
 					//Abilities
