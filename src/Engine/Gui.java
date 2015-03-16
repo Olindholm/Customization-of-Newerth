@@ -1,38 +1,39 @@
 package Engine;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Vector;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import Doodads.LLAccessories;
 import Doodads.LLFile;
-import Doodads.LLInputStream;
-import Engine.Attributes.Avatar;
-import Engine.Attributes.Hero;
 import Interface.CComboBox;
 import Interface.CFrame;
 import Interface.CList;
 import Interface.CPanel;
 import Interface.CTabPane;
-
 
 public class Gui extends CFrame implements ActionListener, Runnable {
 	//STATIC variables;
@@ -475,7 +476,7 @@ public class Gui extends CFrame implements ActionListener, Runnable {
 			success = main.config.update();
 			if(success) {
 				try {
-					String[] cmd = {"java","-jar",main.PATH+"jcustom.jar"};
+					String[] cmd = {"java","-jar", Main.PATH + "jcustom.jar"};
 					Runtime.getRuntime().exec(cmd);
 					
 					System.exit(0);

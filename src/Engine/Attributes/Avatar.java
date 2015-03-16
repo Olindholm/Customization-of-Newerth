@@ -12,9 +12,9 @@ public class Avatar {
 	String icon;
 	
 	//Constructor;
-	public Avatar(String name,String key) {
+	public Avatar(String name, String key) {
 		this.name = name;
-		this.key = key;
+		this.key = key; // When extracting files from the ZipFile, the directories are, case sensitive.
 	}
 	
 	//Set;

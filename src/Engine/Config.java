@@ -16,20 +16,14 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -44,16 +38,16 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 import Doodads.DDS;
 import Doodads.LLAccessories;
 import Doodads.LLFile;
 import Doodads.LLInputStream;
 import Doodads.LLOutputStream;
+import Doodads.LLProperty;
+import Doodads.ZipFile2;
 import Engine.Attributes.Avatar;
 import Engine.Attributes.Hero;
 import Interface.LLGui;
-import Doodads.LLProperty;
 
 public class Config {
 	//STATIC variables;
@@ -61,8 +55,8 @@ public class Config {
 	//Variables;
 	private	Main main;
 
-	ZipFile textures = null;
-	ZipFile resources = null;
+	ZipFile2 textures = null;
+	ZipFile2 resources = null;
 	
 	public	LLProperty		property;
 	public	Vector<Hero>	heroes		= new Vector<Hero>();
@@ -207,7 +201,7 @@ public class Config {
 		}
 		
 		try {
-			resources = new ZipFile(file);
+			resources = new ZipFile2(file);
 		} catch (IOException e) {
 			main.log.print(e,"Failed to establish and read from "+file.getAbsolutePath(),true);
 			return false;
@@ -256,7 +250,7 @@ public class Config {
 					index2 = stringtable.indexOf("\n",index1);
 					String name = stringtable.substring(index1,index2);
 					
-					heroes.add(new Hero(srcname,entry,name));
+					heroes.add(new Hero(srcname, entry, name));
 
 					gui.progresslabel.setText("Locating heroes... "+name);
 					//System.out.println("Found "+name+" at "+entry+" with the keyname of "+srcname);
@@ -312,7 +306,11 @@ public class Config {
 								heroes.get(ii).addUltimate(new Avatar(name,key));
 							}
 							else {
-								heroes.get(ii).addAvatar(new Avatar(name,key));
+								heroes.get(ii).addAvatar(new Avatar(name, key));
+								
+								if (name.equalsIgnoreCase("jin chan")) {
+									System.out.println("derp");
+								}
 							}
 							break;
 						}
@@ -332,17 +330,18 @@ public class Config {
 				
 				for(int ii = 0;ii <= heroes.get(i).getAvatarCount()-1;ii++) {
 					if(ii == 0) {
-						heroes.get(i).getAvatar(ii).setIcon("00000000"+getPath(hero.getAttribute("icon").replace("tga","dds"),heroes.get(i).getEntry()));
+						heroes.get(i).getAvatar(ii).setIcon("00000000"+getPath(hero.getAttribute("icon").replace("tga","dds"), heroes.get(i).getEntry()));
 					}
 					else {
 						for(int iii = 0;iii <= list.getLength()-1;iii++) {
 							Element alt = (Element) list.item(iii);
 							
 							if(heroes.get(i).getAvatar(ii).getKey().equalsIgnoreCase(alt.getAttribute("key")) || heroes.get(i).getAvatar(ii).getFullKey().equalsIgnoreCase(alt.getAttribute("key"))) {
-								heroes.get(i).getAvatar(ii).setIcon("00000000"+getPath(alt.getAttribute("icon2").replace("tga","dds"),heroes.get(i).getEntry()));
+								heroes.get(i).getAvatar(ii).setIcon("00000000" + getPath(alt.getAttribute("icon2").replace("tga","dds"), heroes.get(i).getEntry()));
 								break;
 							}
 						}
+						
 						if(heroes.get(i).getAvatar(ii).getIcon() == null) {
 							main.log.print("Ignoring non-confirmed avatar "+heroes.get(i).getAvatar(ii).getName());
 							
@@ -371,7 +370,7 @@ public class Config {
 		
 		//Textures;
 		try {
-			textures = new ZipFile(file.getParentFile().getAbsolutePath()+File.separator+"textures.s2z");
+			textures = new ZipFile2(file.getParentFile().getAbsolutePath()+File.separator+"textures.s2z");
 		} catch (IOException e) {
 			main.log.print(e,file.getParentFile().getAbsolutePath()+File.separator+"textures.s2z",false);
 			return false;
@@ -703,7 +702,7 @@ public class Config {
 				
 				//Model;
 				try {
-					String model = getModel(modheromodifier.getAttribute("model"),orgheromodifier.getAttribute("model"),hero.getAvatar(0).getKey());
+					String model = getModel(modheromodifier.getAttribute("model"), orgheromodifier.getAttribute("model"), hero.getAvatar(0).getKey());
 					
 					LLOutputStream out = new LLOutputStream(new FileOutputStream(new LLFile(folder+"heroes/"+hero.getFolder()+"/"+modheromodifier.getAttribute("model"))));
 					out.writeString(stamp(model));

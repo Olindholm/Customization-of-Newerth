@@ -36,6 +36,8 @@ Table of content,
 				Bugs & Fixes
 			3.0.1.2
 				Bugs & Fixes
+			3.0.1.3
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -120,5 +122,8 @@ Table of content,
 		== Bugs & Fixes ==
 			- Fixed a bug causing projectile not to change due to a typo in the code.
 			- Ignored a bug causing Behemoth's alt avatars to not display and work correctly due to HoN alt register not being correct.
-	
+			
+	3.0.1.3
+		== Bugs & Fixes ==
+			- Fixed a bug causing Jin Chan(Devourer Alt) to throw NullPointerExceptions.
 	
