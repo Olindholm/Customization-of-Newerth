@@ -38,6 +38,10 @@ Table of content,
 				Bugs & Fixes
 			3.0.1.3
 				Bugs & Fixes
+			3.0.1.4
+				Bugs & Fixes
+			3.0.1.5
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -126,4 +130,13 @@ Table of content,
 	3.0.1.3
 		== Bugs & Fixes ==
 			- Fixed a bug causing Jin Chan(Devourer Alt) to throw NullPointerExceptions.
-	
+			
+	3.0.1.4
+		== Bugs & Fixes ==
+			- Fixed a bug causing a various amount of Heroes not to appear.
+				(OBS! This is only a hotfix with a temporarily solution, might cause other weird behaviors)
+			
+	3.0.1.5
+		== Bugs & Fixes ==
+			- Fixed a bug causing a various amount of Heroes not to appear. (further development from 3.0.1.4)
+			

@@ -16,6 +16,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -197,16 +198,16 @@ public class Config {
 			if(file == null) {
 				return false;
 			}
-			property.setProperty("Setting_Resources",file.getAbsolutePath());
+			property.setProperty("Setting_Resources", file.getAbsolutePath());
 		}
 		
 		try {
-			resources = new ZipFile2(file);
+			resources = new ZipFile2(file, new File(file.getAbsolutePath().replace("resources0.s2z", "resources1.s2z")), new File(file.getAbsolutePath().replace("resources0.s2z", "resources2.s2z")));
 		} catch (IOException e) {
 			main.log.print(e,"Failed to establish and read from "+file.getAbsolutePath(),true);
 			return false;
 		}
-		Enumeration en = resources.entries();
+		ArrayList<ZipEntry> en = resources.entries();
 		String stringtable;
 
 		try {
@@ -227,8 +228,8 @@ public class Config {
 		}
 			
 		//Locating all the heroes;
-		while(en.hasMoreElements()) {
-			String entry = en.nextElement().toString();
+		for (ZipEntry zipEntry : en) {
+			String entry = zipEntry.toString();
 			
 			if(entry.startsWith("heroes/") && LLAccessories.containsCount(entry,"/") == 2 && entry.endsWith(".entity")) {
 				int index1 = "heroes/".length();
@@ -307,10 +308,6 @@ public class Config {
 							}
 							else {
 								heroes.get(ii).addAvatar(new Avatar(name, key));
-								
-								if (name.equalsIgnoreCase("jin chan")) {
-									System.out.println("derp");
-								}
 							}
 							break;
 						}
@@ -612,9 +609,9 @@ public class Config {
 			Vector<String> projectiles = new Vector<String>();
 			Vector<String> abilities = new Vector<String>();
 			
-			Enumeration entries = main.config.resources.entries();
-			while(entries.hasMoreElements()) {
-				String entry = entries.nextElement().toString();
+			ArrayList<ZipEntry> entries = main.config.resources.entries();
+			for (ZipEntry zipEntry : entries) {
+				String entry = zipEntry.toString();
 				
 				if(entry.startsWith("heroes/"+hero.getFolder()) && entry.endsWith(".entity")) {
 					//Projcetiles;
