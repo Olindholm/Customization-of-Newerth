@@ -1178,43 +1178,45 @@ public class Config {
 							String orgeffect = fixPath(orgelements.get(nn).getAttribute("effect"),filepath[0]);
 							String modeffect = fixPath(modelements.get(nn).getAttribute("effect"),filepath[1]);
 							
-							try {
-								LLFile file = new LLFile(folder+modeffect.substring(1));
-								if(!(file.length() > 0)) {
-									StringBuilder sb = new StringBuilder();
-									ZipEntry zipentry = resources.getEntry(orgeffect.substring(1));
-									
-									if(zipentry == null) {
-										main.log.print("Failed to find the specific resource "+orgeffect);
-										continue;
+							if (!orgeffect.isEmpty() && !modeffect.isEmpty()) {
+								try {
+									LLFile file = new LLFile(folder+modeffect.substring(1));
+									if(!(file.length() > 0)) {
+										StringBuilder sb = new StringBuilder();
+										ZipEntry zipentry = resources.getEntry(orgeffect.substring(1));
+										
+										if(zipentry == null) {
+											main.log.print("Failed to find the specific resource "+orgeffect);
+											continue;
+										}
+										
+										LLInputStream in2 = new LLInputStream(resources.getInputStream(zipentry)); //Same case as for 3 lines above;
+										while(in2.available() > 0) {
+											sb.append(in2.readString(4*4*1024));
+										}
+										String effect = sb.toString();
+										
+										//Fixing the paths...
+										String path = orgeffect.replaceFirst("/\\w+\\.{1}effect","/");
+										
+										effect = effect.replace("sample=\"","sample=\""+path);
+										effect = effect.replace("material=\"","material=\""+path);
+										effect = effect.replace("model=\"","model=\""+path);
+										
+										effect = effect.replaceAll(path+"/","/");
+										while(effect.contains("/../")) {
+											effect = effect.replaceFirst("/\\w+/\\.{2}/","/");
+										}
+										
+										//And now finally, time to output!
+										LLOutputStream ut = new LLOutputStream(new FileOutputStream(file));
+										ut.writeString(stamp(effect));
+										ut.close();
 									}
-									
-									LLInputStream in2 = new LLInputStream(resources.getInputStream(zipentry)); //Same case as for 3 lines above;
-									while(in2.available() > 0) {
-										sb.append(in2.readString(4*4*1024));
-									}
-									String effect = sb.toString();
-									
-									//Fixing the paths...
-									String path = orgeffect.replaceFirst("/\\w+\\.{1}effect","/");
-									
-									effect = effect.replace("sample=\"","sample=\""+path);
-									effect = effect.replace("material=\"","material=\""+path);
-									effect = effect.replace("model=\"","model=\""+path);
-									
-									effect = effect.replaceAll(path+"/","/");
-									while(effect.contains("/../")) {
-										effect = effect.replaceFirst("/\\w+/\\.{2}/","/");
-									}
-									
-									//And now finally, time to output!
-									LLOutputStream ut = new LLOutputStream(new FileOutputStream(file));
-									ut.writeString(stamp(effect));
-									ut.close();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
 							}
 						}
 					/*	else if(orgelements.get(nn).getTagName().equalsIgnoreCase("spawnprojectile")) {
