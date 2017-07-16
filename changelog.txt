@@ -42,6 +42,8 @@ Table of content,
 				Bugs & Fixes
 			3.0.1.5
 				Bugs & Fixes
+			3.0.1.6
+				Bugs & Fixes
 			
 ------------------------------------------------------------------------------
 
@@ -139,4 +141,9 @@ Table of content,
 	3.0.1.5
 		== Bugs & Fixes ==
 			- Fixed a bug causing a various amount of Heroes not to appear. (further development from 3.0.1.4)
+			
+	3.0.1.5
+		== Bugs & Fixes ==
+			- Fixed a bug causing a various amount of Heroes not to appear. (further development from 3.0.1.5)
+			- Changed download links from updates etc, dropbox has stopped support static share links. (Do note the installer.jar still broken).
 			

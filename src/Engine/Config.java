@@ -202,7 +202,7 @@ public class Config {
 		}
 		
 		try {
-			resources = new ZipFile2(file, new File(file.getAbsolutePath().replace("resources0.s2z", "resources1.s2z")), new File(file.getAbsolutePath().replace("resources0.s2z", "resources2.s2z")));
+			resources = new ZipFile2(file, new File(file.getAbsolutePath().replace("resources0.s2z", "resources1.s2z")), new File(file.getAbsolutePath().replace("resources0.s2z", "resources2.s2z")), new File(file.getAbsolutePath().replace("resources0.s2z", "resources3.s2z")));
 		} catch (IOException e) {
 			main.log.print(e,"Failed to establish and read from "+file.getAbsolutePath(),true);
 			return false;
@@ -384,12 +384,12 @@ public class Config {
 		String xml;
 
 		try {
-			URLConnection connection = new URL(main.config.property.getProperty("Setting_Changeset","https://dl.dropboxusercontent.com/u/38414202/Customization%20of%20Newerth/changeset.xml")).openConnection();
+			URLConnection connection = new URL(main.config.property.getProperty("Setting_Changeset","http://lindholm.tk/Customization%20of%20Newerth/changeset.xml")).openConnection();
 			connection.setConnectTimeout(5000);
 			
 			StringBuilder sb = new StringBuilder();
 			LLInputStream in = new LLInputStream(connection.getInputStream());
-			main.log.print("Successfully establish a connection with \""+main.config.property.getProperty("Setting_Changeset","https://dl.dropboxusercontent.com/u/38414202/Customization%20of%20Newerth/changeset.xml")+"\"");
+			main.log.print("Successfully establish a connection with \""+main.config.property.getProperty("Setting_Changeset","http://lindholm.tk/Customization%20of%20Newerth/changeset.xml")+"\"");
 			
 			while(in.available() > 0) {
 				sb.append(in.readString(1024*4*4));
@@ -397,13 +397,13 @@ public class Config {
 			xml = sb.toString();
 			
 		} catch (MalformedURLException e) {
-			main.log.print(e,"Failed to recognize URL protocol \""+main.config.property.getProperty("Setting_Changeset","https://dl.dropboxusercontent.com/u/38414202/Customization%20of%20Newerth/changeset.xml")+"\"",false);
+			main.log.print(e,"Failed to recognize URL protocol \""+main.config.property.getProperty("Setting_Changeset","http://lindholm.tk/Customization%20of%20Newerth/changeset.xml")+"\"",false);
 			return false;
 		} catch (SocketTimeoutException e) {
-			main.log.print(e,"Failed to connect to \""+main.config.property.getProperty("Setting_Changeset","https://dl.dropboxusercontent.com/u/38414202/Customization%20of%20Newerth/changeset.xml")+"\", connection timed out",false);
+			main.log.print(e,"Failed to connect to \""+main.config.property.getProperty("Setting_Changeset","http://lindholm.tk/Customization%20of%20Newerth/changeset.xml")+"\", connection timed out",false);
 			return false;
 		} catch (IOException e) {
-			main.log.print(e,"Failed to read data from \""+main.config.property.getProperty("Setting_Changeset","https://dl.dropboxusercontent.com/u/38414202/Customization%20of%20Newerth/changeset.xml")+"\"",false);
+			main.log.print(e,"Failed to read data from \""+main.config.property.getProperty("Setting_Changeset","http://lindholm.tk/Customization%20of%20Newerth/changeset.xml")+"\"",false);
 			return false;
 		}
 		
